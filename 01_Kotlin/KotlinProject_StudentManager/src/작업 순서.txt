@@ -1,0 +1,412 @@
+step01) src 폴더에 각 역할에 대한 패키지를 생성한다.
+
+com.lion.project1.controller
+com.lion.project1.model
+com.lion.project1.view
+com.lion.project1.dao
+com.lion.project1.activity
+com.lion.project1.util
+
+--------------------------------------------------------------
+step02) 프로그램의 상태를 정의하고 상태에 대한 열거형을 정의한다.
+
+총 6가지의 상태로 구분한다.
+메뉴를 보여주는 상태
+학생 정보를 입력하는 상태
+학생 정보를 검색하는 상태
+학생 정보 전체를 출력하는 상태
+각 과목별 총점과 평균을 확인하는 상태
+종료 상태
+
+ValueUtil.kt
+
+// 프로그램 전체 상태를 정의한다.
+enum class ProgramState{
+    // 메뉴를 보여주는 상태
+    PROGRAM_STATE_SHOW_MENU,
+
+    //학생 정보를 입력하는 상태
+    PROGRAM_STATE_INPUT_STUDENT_INFO,
+
+    // 학생 정보를 검색하는 상태
+    PROGRAM_STATE_SEARCH_STUDENT_INFO,
+
+    // 학생 정보 전체를 출력하는 상태
+    PROGRAM_STATE_SHOW_STUDENT_INFO_ALL,
+
+    // 각 과목별 총점과 평균을 확인하는 상태
+    PROGRAM_STATE_SHOW_POINT_TOTAL_AVG,
+
+    //종료 상태
+    PROGRAM_STATE_TERMINATE
+}
+
+--------------------------------------------------------------
+step03)
+
+MainController 파일 생성
+기본 코드 작성
+
+    // main 함수가 호출하는 메서드
+    fun run(){
+
+    }
+
+    // 상태값에 따라 객체를 생성해서 반환하는 메서드
+    fun getStateClass(){
+
+    }
+--------------------------------------------------------------
+step04)
+
+모든 Activity 가 상속받을 BaseActivity 파일 생성
+
+abstract class BaseActivity {
+
+    // 초기화 메서드
+    abstract fun initActivity()
+
+    // 데이터 처리 메서드
+    abstract fun processActivity()
+
+    // 화면에 그리는 처리
+    abstract fun showActivity()
+
+    // 수행이 끝났을 때 호출되는 메서드
+    abstract fun finishActivity()
+
+}
+-----------------------------------------------------------
+step05)
+
+main.kt에서
+MainController 객체 생성후 run 메서드 호출
+
+import com.lion.project1.controller.MainController
+
+fun main() {
+    // Controller의 run 메서드를 호출한다.
+    val mainController = MainController()
+    mainController.run()
+}
+-----------------------------------------------------------
+step 06)
+
+상태값을 담을 변수 정의
+MainController.kt
+
+    // 상태값을 담을 변수
+    val programState = ProgramState.PROGRAM_STATE_SHOW_MENU
+-----------------------------------------------------------
+step 07)
+
+상태별로 분기
+MainController.kt
+
+    // 상태값에 따라 객체를 생성해서 반환하는 메서드
+    fun getStateClass() = when(programState){
+        ProgramState.PROGRAM_STATE_SHOW_MENU -> null
+        ProgramState.PROGRAM_STATE_INPUT_STUDENT_INFO -> null
+        ProgramState.PROGRAM_STATE_SEARCH_STUDENT_INFO -> null
+        ProgramState.PROGRAM_STATE_SHOW_STUDENT_INFO_ALL -> null
+        ProgramState.PROGRAM_STATE_SHOW_POINT_TOTAL_AVG -> null
+        ProgramState.PROGRAM_STATE_TERMINATE -> null
+    }
+-----------------------------------------------------------
+step 08)
+각 상태별 Activity 클래스 생성
+-----------------------------------------------------------
+step09)
+각 상태별 객체 생성 코드 작성
+MainController.kt
+
+    // 상태값에 따라 객체를 생성해서 반환하는 메서드
+    fun getStateClass() = when(programState){
+        ProgramState.PROGRAM_STATE_SHOW_MENU -> ShowMenuActivity()
+        ProgramState.PROGRAM_STATE_INPUT_STUDENT_INFO -> InputStudentInfoActivity()
+        ProgramState.PROGRAM_STATE_SEARCH_STUDENT_INFO -> SearchStudentInfoActivity()
+        ProgramState.PROGRAM_STATE_SHOW_STUDENT_INFO_ALL -> ShowStudentInfoAllActivity()
+        ProgramState.PROGRAM_STATE_SHOW_POINT_TOTAL_AVG -> ShowPointTotalAvgActivity()
+        ProgramState.PROGRAM_STATE_TERMINATE -> TerminateActivity()
+    }
+-----------------------------------------------------------
+step10)
+MainController.kt 의 run 메서드에
+showActivity 메서드 호출 코드 작성
+
+        // 화면을 출력하는 메서드를 호출한다.
+        activity.showActivity()
+-----------------------------------------------------------
+step11)
+ShowMenuActivity.kt 의 showActivity  구현
+
+    override fun showActivity() {
+        println("[ 메인 메뉴 ]")
+        println("1. 학생 정보 입력")
+        println("2. 학생 정보 검색")
+        println("3. 학생 정보 전체 출력")
+        println("4. 각 과목별 총점과 평균 확인")
+        println("5. 종료")
+        print("번호를 입력해주세요 : ")
+    }
+-----------------------------------------------------------
+step12)
+InputStudentInfoActivity.kt 의 showActivity 구현
+-----------------------------------------------------------
+step 13)
+각 상태별로 필요한 기능들을 정리한다.
+
+메뉴를 보여주는 상태
+- 메뉴의 번호를 입력받는 기능
+
+학생 정보를 입력하는 상태
+- 현재 입력된 학생의 수를 보여주는 기능
+- 학생의 정보를 입력하는 기능
+- 입력받은 학생 정보를 저장하는 기능(잘못 입력된 경우를 대비한다)
+
+학생 정보를 검색하는 상태
+- 학생 이름을 입력받는 기능
+- 입력받은 학생의 정보를 출력하는 기능(이름이 같은 학생이 있을 경우 모두 출력)
+- 학생 정보가 없을 경우에 안내 문구를 보여주는 기능
+
+학생 전체 정보를 출력하는 상태
+- 학생 한명의 정보를 출력하는 기능
+- 모든 학생들의 정보를 출력하는 기능
+- 입력한 학생 정보가 없을 경우 안내 문구를 보여주는 기능
+
+각 과목별 총점과 평균을 보여주는 상태
+- 각 과목별 총점 계산하는 기능
+- 각 과목별 평균 계산하는 기능
+- 입력한 학생 정보가 없을 경우 안내 문구를 보여주는 기능
+
+프로그램을 종료하는 상태
+- 프로그램을 종료하는 기능
+- 종료 안내 문구를 출력하는 기능
+-----------------------------------------------------------
+step 14)
+정리한 기능을 그룹으로 묶어 준다.
+
+메뉴를 보여주는 상태
+- 메뉴의 번호를 입력받는 기능 → 상태에 대한 기능
+- 메뉴의 번호를 잘못 입력했을 경우 안내 문구를 보여주는 기능 → 상태에 대한 기능
+
+학생 정보를 입력하는 상태
+- 현재 입력된 학생의 수를 보여주는 기능 → 상태에 대한 기능
+- 학생의 정보를 입력하는 기능 → 상태에 대한 기능
+- 입력받은 학생 정보를 저장하는 기능(잘못 입력된 경우를 대비한다) → 상태에 대한 기능
+
+학생 정보를 검색하는 상태
+- 학생 이름을 입력받는 기능 → 상태에 대한 기능
+- 입력받은 학생의 정보를 출력하는 기능(이름이 같은 학생이 있을 경우 모두 출력) → 상태에 대한 기능, 학생
+- 학생 정보가 없을 경우에 안내 문구를 보여주는 기능 → 상태에 대한 기능
+
+학생 전체 정보를 출력하는 상태
+- 학생 한명의 정보를 출력하는 기능 → 학생
+- 모든 학생들의 정보를 출력하는 기능 → 상태에 대한 기능
+- 입력한 학생 정보가 없을 경우 안내 문구를 보여주는 기능 → 상태에 대한 기능
+
+각 과목별 총점과 평균을 보여주는 상태
+- 각 과목별 총점 계산하는 기능 → 상태에 대한 기능
+- 각 과목별 평균 계산하는 기능 → 상태에 대한 기능
+- 입력한 학생 정보가 없을 경우 안내 문구를 보여주는 기능 → 상태에 대한 기능
+
+프로그램을 종료하는 상태
+- 프로그램을 종료하는 기능 → 상태에 대한 기능
+- 종료 안내 문구를 출력하는 기능 → 상태에 대한 기능
+-----------------------------------------------------------
+step 15)
+필요한 데이터를 정리한다.
+
+메뉴를 보여주는 상태
+- 선택한 메뉴의 번호 -> 상태
+- 메뉴의 전체 번호 -> 상태
+
+학생 정보를 입력하는 상태
+- 현재 입력된 학생의 수 -> 상태
+- 학생의 이름 -> 학생
+- 학생의 나이 -> 학생
+- 학생의 국어 점수 -> 학생
+- 학생의 영어 점수 -> 학생
+- 학생의 수학 점수 -> 학생
+
+학생 정보를 검색하는 상태
+- 검색할 학생 이름 -> 상태
+- 학생들의 정보. 이름... -> 상태
+- 검색된 학생의 정보 -> 학생
+
+학생 전체 정보를 출력하는 상태
+- 학생 개인의 이름, 나이, 국어, 영어, 수학 -> 학생
+- 전체 학생의 수 -> 상태
+- 학생 전체의 정보 -> 상태
+
+각 과목별 총점과 평균을 보여주는 상태
+- 전체 학생의 국어 영어 수학 점수 -> 상태
+- 전체 학생의 수 -> 상태
+- 과목별 총점 -> 상태
+- 과목별 평균 -> 상태
+
+프로그램을 종료하는 상태
+
+--------------------------------------------------------------
+step16)
+
+정리한 데이터를 묶어준다.
+
+메뉴를 보여주는 상태
+- 선택한 메뉴의 번호 -> 상태
+- 메뉴의 전체 번호 -> 상태
+
+학생 정보를 입력하는 상태
+- 현재 입력된 학생의 수 -> 상태
+- 학생의 이름 -> 학생
+- 학생의 나이 -> 학생
+- 학생의 국어 점수 -> 학생
+- 학생의 영어 점수 -> 학생
+- 학생의 수학 점수 -> 학생
+
+학생 정보를 검색하는 상태
+- 검색할 학생 이름 -> 상태
+- 학생들의 정보. 이름... -> 상태
+- 검색된 학생의 정보 -> 학생
+
+학생 전체 정보를 출력하는 상태
+- 학생 개인의 이름, 나이, 국어, 영어, 수학 -> 학생
+- 전체 학생의 수 -> 상태
+- 학생 전체의 정보 -> 상태
+
+각 과목별 총점과 평균을 보여주는 상태
+- 전체 학생의 국어 영어 수학 점수 -> 상태
+- 전체 학생의 수 -> 상태
+- 과목별 총점 -> 상태
+- 과목별 평균 -> 상태
+
+프로그램을 종료하는 상태
+
+--------------------------------------------------------------
+step17)
+
+학생 클래스 및 각 상태별 클래스에 프로퍼티와 메서드를 정의한다.
+--------------------------------------------------------------
+step18)
+
+ShowMenuActivity의 메서드 구현
+--------------------------------------------------------------
+step19)
+
+MainController 에 상태값 변경시키는 메서드 구현
+
+    // 상태 값을 변경하는 메서드
+    fun setProgramState(programState: ProgramState){
+        this.programState = programState
+    }
+
+ShowMenuActivity 의 주 생성자 추가
+(var mainController: MainController)
+
+ShowMenuActivity 객체 생성시 mainController 주소값 전달
+ProgramState.PROGRAM_STATE_SHOW_MENU -> ShowMenuActivity(this)
+
+ValueUtil에 각 메뉴를 나타내는 상수값 정의
+// 각 메뉴
+enum class MenuNumber(var num:Int){
+    // 학생 정보 입력
+    MAIN_MENU_INPUT_STUDENT_INFO(1),
+    // 학생 정보 검색
+    MAIN_MENU_SEARCH_STUDENT_INFO(2),
+    // 학생 정보 전체 출력
+    MAIN_MENU_SHOW_STUDENT_INFO_ALL(3),
+    // 각 과목별 총점과 평균 확인
+    MAIN_MENU_SHOW_POINT_TOTAL_AVG(4),
+    // 종료
+    MAIN_MENU_TERMINATE(5)
+}
+
+ShowMenuActivity의 finishActivity 메서드 구현
+
+override fun finishActivity() {
+        // 사용자가 입력한 메뉴 번호에 따라 프로그램의 상태를 변경한다.
+        when(menuNumber){
+            // 학생 정보를 입력
+            MenuNumber.MAIN_MENU_INPUT_STUDENT_INFO.num ->
+                mainController.setProgramState(ProgramState.PROGRAM_STATE_INPUT_STUDENT_INFO)
+            // 학생 정보를 검색
+            MenuNumber.MAIN_MENU_SEARCH_STUDENT_INFO.num ->
+                mainController.setProgramState(ProgramState.PROGRAM_STATE_SEARCH_STUDENT_INFO)
+            // 모든 학생의 정보를 출력
+            MenuNumber.MAIN_MENU_SHOW_STUDENT_INFO_ALL.num ->
+                mainController.setProgramState(ProgramState.PROGRAM_STATE_SHOW_STUDENT_INFO_ALL)
+            // 과목별 총점과 평균을 출력
+            MenuNumber.MAIN_MENU_SHOW_POINT_TOTAL_AVG.num ->
+                mainController.setProgramState(ProgramState.PROGRAM_STATE_SHOW_POINT_TOTAL_AVG)
+            // 종료
+            MenuNumber.MAIN_MENU_TERMINATE.num ->
+                mainController.setProgramState(ProgramState.PROGRAM_STATE_TERMINATE)
+        }
+    }
+--------------------------------------------------------------
+step20)
+
+InputStudentInfoActivity구현
+
+showStudentCnt 구현
+
+    // 현재 입력된 학생의 수를 보여주는 기능
+    fun showStudentCnt(){
+        if(studentList != null){
+            println("현재 입력된 학생 수 : ${studentList?.size}명")
+        } else {
+            println("현재 입력된 학생 수 : 0명")
+        }
+    }
+
+inputStudentInfo 구현
+
+// 학생의 정보를 입력받는 기능
+    fun inputStudentInfo(){
+        var name = ""
+        var age = -1
+        var kor = -1
+        var eng = -1
+        var math = -1
+
+        print("학생 이름 :")
+        name = scanner.next()
+
+        do {
+            try {
+                print("학생 나이 :")
+                age = scanner.nextInt()
+
+                if(age !in 0..200){
+                    println("나이는 0 ~ 200까지의 값을 넣어주세요")
+                }
+            }catch(e:NumberFormatException){
+                println("나이는 숫자로 입력해주세요")
+            }
+        } while(age !in 0..200)
+
+        print("국어 점수 :")
+        kor = scanner.nextInt()
+        print("영어 점수 :")
+        eng = scanner.nextInt()
+        print("수학 점수 :")
+        math = scanner.nextInt()
+
+        studentModel = StudentModel(name, age, kor, eng, math)
+    }
+
+ showActivity 수정
+
+     override fun showActivity() {
+         println()
+         println("[ 학생정보 입력 ]")
+         // 현재 학생 수를 출력한다.
+         showStudentCnt()
+         // 현재 학생의 정보를 입력받는다.
+         inputStudentInfo()
+
+     }
+ --------------------------------------------------------------
+ step21)
+
+
