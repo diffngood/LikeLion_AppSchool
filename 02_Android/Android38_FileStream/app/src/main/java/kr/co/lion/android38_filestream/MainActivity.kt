@@ -6,6 +6,7 @@ import android.os.Bundle
 import kr.co.lion.android38_filestream.databinding.ActivityMainBinding
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
                 // Stream을 가져온다.
                 val fileOutputStream = openFileOutput("data1.dat", MODE_PRIVATE)
                 val dataOutputStream = DataOutputStream(fileOutputStream)
+
                 dataOutputStream.writeInt(100)
                 dataOutputStream.writeDouble(11.11)
                 dataOutputStream.writeBoolean(true)
@@ -69,11 +71,32 @@ class MainActivity : AppCompatActivity() {
                     append("data3 : ${data3}\n")
                     append("data4 : ${data4}\n")
                 }
+            }
 
-                // 외부 저장소
-                // step1) READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE 권한을 취득 해야 한다.
-                // step2) 외부 저장소 경로를 가지고 있는 xml 파일을 만들어 준다. (본 예제에서는 xml/file_path.xml)
+            // 외부 저장소 (sdcard/Android/data/패키지명/files/여기!)
+            // 외부 저장소 영역의 Android/data/ 폴더에 저장된다.
+            // Android/data/ 경로에 애플리케이션 패키지 명으로 폴더가 만들어지고 false 폴더도 만들어진다.
+            // 여기에 파일이 저장된다.
 
+            button3.setOnClickListener {
+
+                // 외부 저장소 까지의 경로를 가져온다.
+                // null을 넣어주면 files 까지의 경로를 가져온다.
+                val filePath = getExternalFilesDir(null).toString()!!
+
+                // 이를 통해 스트림을 생성한다. (내부 저장소와 이 부분만 다르다)
+                val fileOutputStream = FileOutputStream("${filePath}/data2.dat")
+                val dataOutputStream = DataOutputStream(fileOutputStream)
+
+                dataOutputStream.writeInt(200)
+                dataOutputStream.writeDouble(22.22)
+                dataOutputStream.writeBoolean(false)
+                dataOutputStream.writeUTF("문자열2")
+
+                dataOutputStream.flush()
+                dataOutputStream.close()
+                
+                textView.text = "외부 저장소 앱 데이터 폴더에 저장"
             }
         }
     }
