@@ -23,4 +23,9 @@
         </activity>
     </application>
 
+    <!-- 다른 애플리케이션이 가지고 있는 ContentProvider 사용을 위한 권한 -->
+    <!-- 모든 sql 쿼리 작업을 허용하도록 설정한다 -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission"/>
+
 </manifest>

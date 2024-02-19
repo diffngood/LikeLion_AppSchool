@@ -1,5 +1,6 @@
 package kr.co.lion.android39_contentproviderapp1
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import kr.co.lion.android39_contentproviderapp1.databinding.ActivityMainBinding
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(activityMainBinding.root)
 
         activityMainBinding.apply {
+
             button.setOnClickListener {
 
                 val sql = """
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 dbHelper.close()
             }
+
         } // activityMainBinding.apply (end)
     }
 }

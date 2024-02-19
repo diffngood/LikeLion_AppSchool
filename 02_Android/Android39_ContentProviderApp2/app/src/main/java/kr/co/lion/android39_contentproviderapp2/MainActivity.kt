@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         activityMainBinding.apply {
 
+            // Insert 버튼
             buttonMainInsert.setOnClickListener{
                 // 저장할 데이터를 준비한다.
                 val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -33,15 +34,80 @@ class MainActivity : AppCompatActivity() {
                 cv1.put("data4", now)
 
                 // ContentProvider 접근을 위한 이름을 가진 객체를 생성한다.
+                // ContentProvider 사용을 위해서 권한을 부여해줘야 한다.
                 val uri = Uri.parse("content://kr.co.lion.testprovider")
 
                 // 저장요청을 수행한다.
-                // 저장 요청은 OS에 하게 되고 이 요청을 받은 OS는 해당 Content Provider의 insert 메서드를 호출해준다
+                // 저장 요청은 OS에 하게 되고 이 요청을 받은 OS는 해당 Content Provider의 insert 메서드를 호출해준다.
                 // Content Provider의 insert 메서드 내에 코드가 구현되어 있는대로 동작한다.
                 contentResolver.insert(uri, cv1)
                 textView.text = "저장완료"
             } // Insert Button Click Listener (end)
 
+            // Select 버튼
+            buttonMainSelect.setOnClickListener {
+                val uri = Uri.parse("content://kr.co.lion.testprovider")
+                // 데이터를 가져온다.
+                // 두 번째 : 가져올 컬럼 목록, null이면 모두 가져온다.
+                // 세 번째 : 조건절
+                // 네 번째 : 조건절의 ?에 설정된 값 배열
+                // 다 섯번째 : 정렬 기준 컬럼 목록
+                val cursor = contentResolver.query(uri, null, null, null, null)
+
+                while(cursor!!.moveToNext()){
+                    // 컬럼 순서값을 가져온다.
+                    val idx1 = cursor.getColumnIndex("idx")
+                    val idx2 = cursor.getColumnIndex("data1")
+                    val idx3 = cursor.getColumnIndex("data2")
+                    val idx4 = cursor.getColumnIndex("data3")
+                    val idx5 = cursor.getColumnIndex("data4")
+
+                    // 데이터를 가져온다.
+                    val  idx = cursor.getInt(idx1)
+                    val  data1 = cursor.getInt(idx2)
+                    val  data2 = cursor.getDouble(idx3)
+                    val  data3 = cursor.getString(idx4)
+                    val  data4 = cursor.getString(idx5)
+
+                    textView.apply {
+                        text = "idx : ${idx}\n"
+                        append("data1 : ${data1}\n")
+                        append("data2 : ${data2}\n")
+                        append("data3 : ${data3}\n")
+                        append("data4 : ${data4}\n")
+                    }
+                }
+            }
+
+            // Update 버튼
+            buttonMainUpdate.setOnClickListener {
+                // 수정할 데이터를 담는다.
+                val cv1 = ContentValues()
+                cv1.put("data1", 1000)
+
+                // 조건절
+                val where = "idx = ?"
+                val args = arrayOf("1")
+
+                // 수정한다.
+                val uri = Uri.parse("content://kr.co.lion.testprovider")
+                contentResolver.update(uri, cv1, where, args)
+                
+                textView.text = "수정 완료"
+            }
+
+            // Delete 버튼
+            buttonMainDelete.setOnClickListener {
+                // 조건절
+                val where = "idx = ?"
+                val args = arrayOf("1")
+
+                // 삭제 요청한다.
+                val uri = Uri.parse("content://kr.co.lion.testprovider")
+                contentResolver.delete(uri, where, args)
+                
+                textView.text = "삭제 완료"
+            }
 
 
         } // activityMainBinding.apply (end)
