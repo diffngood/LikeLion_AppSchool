@@ -3,9 +3,11 @@ package kr.co.lion.android39_contentproviderapp1
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 
 class TestProvider : ContentProvider() {
+
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
         TODO("Implement this to handle requests to delete one or more rows")
@@ -18,8 +20,15 @@ class TestProvider : ContentProvider() {
         return uri.authority
     }
 
+    // 첫 번째 : authorities 가 담긴 Uri 객체
+    // 두 번째 : 저장할 데이터가 담긴 객체
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Implement this to handle requests to insert a new row.")
+        // 저장한다.
+        var dbHelper = DBHelper(context!!)
+        dbHelper.writableDatabase.insert("TestTable", null, values)
+        dbHelper.close()
+
+        return uri
     }
 
     // ContentProvider 생성될 때 자동으로 호출된다.
