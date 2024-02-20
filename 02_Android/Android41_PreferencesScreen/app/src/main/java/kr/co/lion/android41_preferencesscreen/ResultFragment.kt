@@ -29,11 +29,20 @@ class ResultFragment : Fragment() {
             val data2 = pref.getBoolean("data2", false)
             // SwitchPreference
             val data3 = pref.getBoolean("data3", false)
+            // ListPreference
+            val data4 = pref.getString("data4", null)
+            // MultiSelectListPreference
+            val data5 = pref.getStringSet("data5", null)
 
             textViewResult.apply {
                 text = "data1 : ${data1}\n"
                 append("data2 : ${data2}\n")
                 append("data3 : ${data3}\n")
+                append("data4 : ${data4}\n")
+
+                data5?.forEach {
+                    append("data5 : ${it}\n")
+                }
             }
         }
 

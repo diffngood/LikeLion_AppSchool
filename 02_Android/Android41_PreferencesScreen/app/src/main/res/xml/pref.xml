@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="입력요소">
@@ -32,4 +33,27 @@
             app:summaryOff="Off 상태입니다"
             app:summaryOn="On 상태입니다" />
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="리스트 요소">
+
+        <ListPreference
+            android:defaultValue="value1"
+            android:title="단일 리스트 요소"
+            app:dialogIcon="@drawable/compost_24px"
+            app:entries="@array/title_list"
+            app:entryValues="@array/value_list"
+            app:icon="@drawable/delete_24px"
+            app:key="data4"
+            app:summary="단일 리스트 요소입니다" />
+        <MultiSelectListPreference
+            android:title="다중 리스트 요소"
+            app:defaultValue="@array/default_list"
+            app:dialogIcon="@drawable/done_24px"
+            app:entries="@array/title_list"
+            app:entryValues="@array/value_list"
+            app:icon="@drawable/format_list_bulleted_24px"
+            app:key="data5"
+            app:summary="다중 리스트 요소입니다" />
+    </PreferenceCategory>
+
 </PreferenceScreen>
