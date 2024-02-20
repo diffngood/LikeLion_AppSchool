@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="입력요소">
+
+        <EditTextPreference
+            android:defaultValue="안녕하세요"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="문자열 입력"
+            app:dialogIcon="@drawable/add_24px"
+            app:dialogMessage="문자열 입력요소입니다"
+            app:dialogTitle="문자열 입력"
+            app:icon="@drawable/approval_24px"
+            app:key="data1"
+            app:summary="문자열 입력 요소입니다" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:title="체크박스"
+            app:icon="@drawable/arrow_back_24px"
+            app:key="data2"
+            app:summary="체크박스 요소입니다"
+            app:summaryOff="체크 되어 있지 않습니다"
+            app:summaryOn="체크 되어 있습니다" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:title="스위치"
+            app:icon="@drawable/calendar_month_24px"
+            app:key="data3"
+            app:summary="스위치 요소입니다"
+            app:summaryOff="Off 상태입니다"
+            app:summaryOn="On 상태입니다" />
+    </PreferenceCategory>
+</PreferenceScreen>
