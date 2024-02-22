@@ -34,6 +34,5 @@ class InputFragment : Fragment() {
             // 저장한다.
             MemoDao.insertMemo(mainActivity, memoModel)
         }
-
     }
 }
