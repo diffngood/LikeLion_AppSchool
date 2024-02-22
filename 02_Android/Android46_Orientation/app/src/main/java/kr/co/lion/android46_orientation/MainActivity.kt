@@ -14,6 +14,16 @@ import kr.co.lion.android46_orientation.databinding.ActivityMainBinding
 // 3. onCreate가 호출된다. 이 때, 1에서 데이터를 담은 Bundle 객체가 매개변수로 들어온다.
 //    Bundle 객체 담긴 데이터를 추출하여 View에 넣어줘서 복원작업을 수행한다.
 
+// 가로 모드 대응시 주의할 점.
+// 1. 세로모드에서 사용하는 xml과 가로모드에서 사용하는 xml 파일의 이름이 같아야한다
+// 2. 세로모드의 UI 요소들과 가로모드의 UI 요소들의 아이디가 모두 일치해야 한다.
+
+// 만약 세로모드만 지원하겠다면..
+// land 폴더에 layout 파일을 만들지 않는 것으로 끝나면 안된다.
+// land 폴더에 layout 파일을 만들지 않았다는 것은 단말기 회전이 발생함에 대응을 하지 않은 것에 해당하는 것이다.
+// AndroidManifest.xml 에서 Activity에 screenOrientation 속성에 방향을 지정해줘야 한다.
+// 세로 portrait, 가로 landscape
+
 class MainActivity : AppCompatActivity() {
 
     lateinit var activityMainBinding: ActivityMainBinding
@@ -49,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 textView.text = "안녕하세요"
             }
             button2.setOnClickListener {
-                textView.text = editTextText.text
+                textView.text = editTextText?.text
             }
         }
     }
