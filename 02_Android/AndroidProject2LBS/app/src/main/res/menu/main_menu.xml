@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/main_menu_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:title="현재위치"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/main_menu_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/panorama_24px"
+        android:title="주변정보"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/main_manu_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/restart_alt_24px"
+        android:title="초기화"
+        app:showAsAction="always" />
+</menu>
