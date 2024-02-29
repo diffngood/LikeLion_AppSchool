@@ -56,16 +56,25 @@ class MemoModifyFragment : Fragment() {
                                 materialAlertDialogBuilder.setMessage("수정을 완료하면 이전 내용으로 복구할 수 없습니다")
                                 materialAlertDialogBuilder.setNegativeButton("취소", null)
                                 materialAlertDialogBuilder.setPositiveButton("완료"){ dialogInterface: DialogInterface, i: Int ->
+                                    // 포커스를 제거한다.
+                                    mainActivity.hideSoftInput()
                                     // MemoReadFragment로 돌아간다.
                                     mainActivity.removeFragment(FragmentName.MEMO_MODIFY_FRAGMENT)
                                 }
                                 materialAlertDialogBuilder.show()
                             }
                         }
+                        // 초기화
+                        R.id.menuItemMemoModifyReset -> {
+                            // 입력 요소 초기화
+                            textFieldMemoModifySubject.setText("메모 제목")
+                            textFieldMemoModifyText.setText("메모 내용")
+                            // 제목에 포커스를 준다.
+                            mainActivity.showSoftInput(textFieldMemoModifySubject)
+                        }
                     }
                     true
                 }
-
             }
         }
     }
