@@ -69,6 +69,12 @@ class ShowAllFragment : Fragment() {
         override fun onBindViewHolder(holder: RecyclerShowAllViewHolder, position: Int) {
             holder.rowShowAllBinding.textShowAllSubject.text = "Subject: $position"
             holder.rowShowAllBinding.textShowAllWriteDate.text = "2024-02-28"
+
+            // 항목을 누르면 동작하는 리스너
+            holder.rowShowAllBinding.root.setOnClickListener {
+                // 메모를 보는 화면이 나타나게 한다.
+                mainActivity.replaceFragment(FragmentName.MEMO_READ_FRAGMENT, true, false, null)
+            }
         }
     }
 

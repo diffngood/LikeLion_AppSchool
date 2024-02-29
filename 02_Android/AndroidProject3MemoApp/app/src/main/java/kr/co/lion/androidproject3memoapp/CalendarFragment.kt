@@ -1,15 +1,21 @@
 package kr.co.lion.androidproject3memoapp
 
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import com.google.android.material.snackbar.Snackbar
 import kr.co.lion.androidproject3memoapp.databinding.FragmentCalendarBinding
 import kr.co.lion.androidproject3memoapp.databinding.RowCalendarBinding
+import java.util.Calendar
 
 class CalendarFragment : Fragment() {
 
@@ -23,8 +29,57 @@ class CalendarFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         settingRecyclerMain()
+        settingButtonMainToday()
+        settingCalendarMain()
 
         return fragmentCalendarBinding.root
+    }
+
+    // 오늘 버튼 설정
+    fun settingButtonMainToday(){
+        fragmentCalendarBinding.apply {
+            buttonMainToday.setOnClickListener {
+
+                // 현재 시간을 Long 값으로 구해 CalendarView에 설정해준다.
+                calendarMain.date = System.currentTimeMillis()
+                // MainActivity 의 프로퍼티에 넣어준다.
+                mainActivity.calendarNowTime = calendarMain.date
+
+                Log.d("test1234", "오늘 버튼: ${mainActivity.calendarNowTime}")
+
+                // 현재 날짜를 가져와서 캘린더 뷰에 설정
+                // val today = Calendar.getInstance()
+                // calendarMain.setDate(today.timeInMillis)
+            }
+        }
+    }
+
+    // 캘린더 설정
+    fun settingCalendarMain(){
+        fragmentCalendarBinding.apply {
+            calendarMain.apply {
+                // 캘린더의 날짜를 MainActivity의 프로퍼티 값으로 지정한다.
+                date = mainActivity.calendarNowTime
+                // 캘린더의 최대 날짜를 오늘로 설정한다.
+                maxDate = System.currentTimeMillis()
+
+                // 캘린더 뷰의 날짜가 변경되면 동작하는 리스너
+                // 두번째, 세번째, 네번째 : 설정된 년, 월, 일
+                setOnDateChangeListener { view, year, month, dayOfMonth ->
+                    // 캘린더의 현재 날짜 값을 MainActivity의 프로퍼티로 넣어준다.
+                    // 년월일값을 Long 날짜값으로 변경한다.
+                    // 날짜 데이터를 관리하는 객체를 생성하고 새롭게 설정된 날짜 값을 넣어준다.
+                    val c1 = Calendar.getInstance()
+                    c1.set(year, month, dayOfMonth)
+                    // 설정된 날짜 값을 Long 형태의 시간 값으로 가져와 담아준다.
+                    mainActivity.calendarNowTime = c1.timeInMillis
+                    // calendarView의 date 프로퍼티도 설정해준다.
+                    date = c1.timeInMillis
+
+                    Log.d("test1234", "${mainActivity.calendarNowTime}")
+                }
+            }
+        }
     }
 
     // RecyclerView 설정
@@ -66,6 +121,14 @@ class CalendarFragment : Fragment() {
 
         override fun onBindViewHolder(holder: RecyclerMainViewHolder, position: Int) {
             holder.rowCalendarBinding.textCalendarSubject.text = "메모 : $position"
+
+            // 항목을 누르면 동작하는 리스너
+            holder.rowCalendarBinding.root.setOnClickListener {
+                // 메모를 보는 화면이 나타나게 한다.
+                mainActivity.replaceFragment(FragmentName.MEMO_READ_FRAGMENT, true, false, null)
+                
+            }
         }
     }
+
 }

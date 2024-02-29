@@ -8,6 +8,8 @@ class Tools {
 enum class FragmentName(var str: String){
     MAIN_FRAGMENT("MainFragment"),
     MEMO_ADD_FRAGMENT("MemoAddFragment"),
+    MEMO_READ_FRAGMENT("MemoReadFragment"),
+    MEMO_MODIFY_FRAGMENT("MemoModifyFragment"),
 }
 
 // MainFragment의 하위 Fragment의 이름
