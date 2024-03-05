@@ -1,26 +1,27 @@
 package kr.co.lion.androidproject3memoapp
 
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import com.google.android.material.snackbar.Snackbar
 import kr.co.lion.androidproject3memoapp.databinding.FragmentCalendarBinding
 import kr.co.lion.androidproject3memoapp.databinding.RowCalendarBinding
+import java.text.SimpleDateFormat
 import java.util.Calendar
+
 
 class CalendarFragment : Fragment() {
 
     lateinit var fragmentCalendarBinding: FragmentCalendarBinding
     lateinit var mainActivity: MainActivity
+
+    // 리사이클러뷰 구성을 위한 리스트
+    var memoList = mutableListOf<MemoModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -32,6 +33,7 @@ class CalendarFragment : Fragment() {
         settingButtonMainToday()
         settingCalendarMain()
 
+
         return fragmentCalendarBinding.root
     }
 
@@ -39,17 +41,12 @@ class CalendarFragment : Fragment() {
     fun settingButtonMainToday(){
         fragmentCalendarBinding.apply {
             buttonMainToday.setOnClickListener {
-
                 // 현재 시간을 Long 값으로 구해 CalendarView에 설정해준다.
                 calendarMain.date = System.currentTimeMillis()
                 // MainActivity 의 프로퍼티에 넣어준다.
                 mainActivity.calendarNowTime = calendarMain.date
-
-                Log.d("test1234", "오늘 버튼: ${mainActivity.calendarNowTime}")
-
-                // 현재 날짜를 가져와서 캘린더 뷰에 설정
-                // val today = Calendar.getInstance()
-                // calendarMain.setDate(today.timeInMillis)
+                // 리사이클러 뷰를 갱신한다.
+                getMemoDataDate()
             }
         }
     }
@@ -58,25 +55,26 @@ class CalendarFragment : Fragment() {
     fun settingCalendarMain(){
         fragmentCalendarBinding.apply {
             calendarMain.apply {
-                // 캘린더의 날짜를 MainActivity의 프로퍼티 값으로 지정한다.
+                // 캘런더의 날짜를 MainActivity의 프로퍼티 값으로 지정한다.
                 date = mainActivity.calendarNowTime
-                // 캘린더의 최대 날짜를 오늘로 설정한다.
+                // 캘런더의 최대 날짜를 오늘로 설정한다.
                 maxDate = System.currentTimeMillis()
 
                 // 캘린더 뷰의 날짜가 변경되면 동작하는 리스너
                 // 두번째, 세번째, 네번째 : 설정된 년, 월, 일
                 setOnDateChangeListener { view, year, month, dayOfMonth ->
-                    // 캘린더의 현재 날짜 값을 MainActivity의 프로퍼티로 넣어준다.
+                    // 갤린더의 현재 날짜 값을 MainActivity의 프로퍼티로 넣어준다.
                     // 년월일값을 Long 날짜값으로 변경한다.
                     // 날짜 데이터를 관리하는 객체를 생성하고 새롭게 설정된 날짜 값을 넣어준다.
                     val c1 = Calendar.getInstance()
                     c1.set(year, month, dayOfMonth)
-                    // 설정된 날짜 값을 Long 형태의 시간 값으로 가져와 담아준다.
+                    // 설정된 날짜값을 Long 형태의 시간 값으로 가져와 담아준다.
                     mainActivity.calendarNowTime = c1.timeInMillis
                     // calendarView의 date 프로퍼티도 설정해준다.
                     date = c1.timeInMillis
 
-                    Log.d("test1234", "${mainActivity.calendarNowTime}")
+                    // 리사이클러 뷰를 갱신한다.
+                    getMemoDataDate()
                 }
             }
         }
@@ -86,18 +84,25 @@ class CalendarFragment : Fragment() {
     fun settingRecyclerMain(){
         fragmentCalendarBinding.apply {
             recyclerMain.apply {
-                // 어뎁터 및 레이아웃 매니저 설정
+                // 어뎁터 설정
                 adapter = RecyclerMainAdapter()
+                // 레이아웃 매니저 설정
                 layoutManager = LinearLayoutManager(mainActivity)
+                // 데코
                 val deco = MaterialDividerItemDecoration(mainActivity, MaterialDividerItemDecoration.VERTICAL)
                 addItemDecoration(deco)
+
+                // 리사이클러 뷰를 갱신한다.
+                getMemoDataDate()
             }
         }
     }
 
-    inner class RecyclerMainAdapter(): RecyclerView.Adapter<RecyclerMainAdapter.RecyclerMainViewHolder>(){
-        inner class RecyclerMainViewHolder(rowCalendarBinding: RowCalendarBinding): RecyclerView.ViewHolder(rowCalendarBinding.root){
-            val rowCalendarBinding: RowCalendarBinding
+    // RecyclerView의 어뎁터
+    inner class RecyclerMainAdapter : RecyclerView.Adapter<RecyclerMainAdapter.RecyclerMainViewHolder>(){
+
+        inner class RecyclerMainViewHolder(rowCalendarBinding: RowCalendarBinding) : RecyclerView.ViewHolder(rowCalendarBinding.root){
+            val rowCalendarBinding:RowCalendarBinding
 
             init {
                 this.rowCalendarBinding = rowCalendarBinding
@@ -116,19 +121,43 @@ class CalendarFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            return 10
+            return memoList.size
         }
 
         override fun onBindViewHolder(holder: RecyclerMainViewHolder, position: Int) {
-            holder.rowCalendarBinding.textCalendarSubject.text = "메모 : $position"
+            holder.rowCalendarBinding.textCalendarSubject.text = memoList[position].memoSubject
 
             // 항목을 누르면 동작하는 리스너
             holder.rowCalendarBinding.root.setOnClickListener {
                 // 메모를 보는 화면이 나타나게 한다.
-                mainActivity.replaceFragment(FragmentName.MEMO_READ_FRAGMENT, true, false, null)
-                
+                val memoReadBundle = Bundle()
+                memoReadBundle.putInt("memoIdx", memoList[position].memoIdx)
+                mainActivity.replaceFragment(FragmentName.MEMO_READ_FRAGMENT, true, true, memoReadBundle)
             }
         }
     }
 
+    // 갤린더에 설정되어 있는 날짜의 메모 내용을 가져와 리사이클러뷰를 갱신한다.
+    fun getMemoDataDate(){
+        // 갤린더에 설정되어 있는 날짜 데이터를 년-월-일 형태로 만들어준다
+        // 데이터 베이스에 이렇게 저장되어 있기 때문에...
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val targetDate = simpleDateFormat.format(mainActivity.calendarNowTime)
+        // 데이터를 가져온다
+        memoList = MemoDao.selectMemoDataDate(mainActivity, targetDate)
+        // 리사이클러뷰를 갱신한다.
+        fragmentCalendarBinding.recyclerMain.adapter?.notifyDataSetChanged()
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+

@@ -17,16 +17,15 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var activityMainBinding: ActivityMainBinding
 
-    // 프레그먼트를 담을 프로퍼티
-    var oldFragment: Fragment? = null
-    var newFragment: Fragment? = null
+    // 프래그먼트를 담을 프로퍼티
+    var oldFragment:Fragment? = null
+    var newFragment:Fragment? = null
 
     // MainFragment 로 돌아올 때 복원을 위한 프로퍼티들
-    // MainFragment 를 통해 보여줄 Fragment 이름
+    // MainFragment를 통해 보여줄 Fragment 이름
     var mainSubFragmentName = MainSubFragmentName.CALENDAR_FRAGMENT
     // CalendarFragment 에서 설정된 날짜를 담을 변수
     var calendarNowTime = System.currentTimeMillis()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,15 +57,19 @@ class MainActivity : AppCompatActivity() {
         // 이름으로 분기한다.
         // Fragment의 객체를 생성하여 변수에 담아준다.
         when(name){
+            // 첫 화면 프래그먼트
             FragmentName.MAIN_FRAGMENT -> {
                 newFragment = MainFragment()
             }
+            // 메모 추가 화면
             FragmentName.MEMO_ADD_FRAGMENT -> {
                 newFragment = MemoAddFragment()
             }
+            // 메모 읽기 화면
             FragmentName.MEMO_READ_FRAGMENT -> {
                 newFragment = MemoReadFragment()
             }
+            // 메모 수정 화면
             FragmentName.MEMO_MODIFY_FRAGMENT -> {
                 newFragment = MemoModifyFragment()
             }
@@ -141,26 +144,26 @@ class MainActivity : AppCompatActivity() {
 
     // 뷰에 포커스를 주고 키보드를 올린다.
     fun showSoftInput(view: View){
-        // 뷰에 포커스를 준다
+        // 뷰에 포커스를 준다.
         view.requestFocus()
         thread {
             // 딜레이
             SystemClock.sleep(200)
             // 키보드 관리 객체를 가져온다.
-            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManger = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             // 키보드를 올린다.
-            inputMethodManager.showSoftInput(view, 0)
+            inputMethodManger.showSoftInput(view, 0)
         }
     }
 
     // 키보드를 내려주고 포커스를 제거한다.
     fun hideSoftInput(){
-        // 포커스를 가지고 있는 뷰가 있다면...
-        if (window.currentFocus != null){
+        // 포커스를 가지고 있는 뷰가 있다면..
+        if(window.currentFocus != null){
             // 키보드 관리 객체를 가져온다.
-            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManger = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             // 키보드를 내려준다.
-            inputMethodManager.hideSoftInputFromWindow(window.currentFocus?.windowToken, 0)
+            inputMethodManger.hideSoftInputFromWindow(window.currentFocus?.windowToken, 0)
             // 포커스를 제거해준다.
             window.currentFocus?.clearFocus()
         }
@@ -177,3 +180,12 @@ class MainActivity : AppCompatActivity() {
         materialAlertDialogBuilder.show()
     }
 }
+
+
+
+
+
+
+
+
+

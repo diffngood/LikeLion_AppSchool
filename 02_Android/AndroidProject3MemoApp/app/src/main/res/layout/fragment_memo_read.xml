@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:transitionGroup="true"
-    tools:context=".MemoReadFragment">
+    tools:context=".MemoReadFragment" >
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarMemoRead"
@@ -31,8 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:focusable="false"
                 android:cursorVisible="false"
+                android:focusable="false"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -47,8 +47,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:focusable="false"
                 android:cursorVisible="false"
+                android:focusable="false"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -63,8 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:focusable="false"
                 android:cursorVisible="false"
+                android:focusable="false"
                 android:inputType="text|textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>

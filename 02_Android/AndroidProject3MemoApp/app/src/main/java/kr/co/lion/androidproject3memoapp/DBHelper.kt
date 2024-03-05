@@ -3,9 +3,8 @@ package kr.co.lion.androidproject3memoapp
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 
-class DBHelper(context: Context): SQLiteOpenHelper(context, "MemoDB.db", null, 1) {
+class DBHelper(context:Context) : SQLiteOpenHelper(context, "MemoDB.db", null, 1){
     override fun onCreate(db: SQLiteDatabase?) {
         // 테이블을 만드는 쿼리문
         val sql = """
@@ -21,7 +20,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, "MemoDB.db", null, 1
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        Log.d("test1234", "oldVersion: ${oldVersion} -> newVersion: ${newVersion}")
+
     }
 
 }

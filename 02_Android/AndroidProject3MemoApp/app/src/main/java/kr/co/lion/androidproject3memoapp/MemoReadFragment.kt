@@ -30,23 +30,20 @@ class MemoReadFragment : Fragment() {
     fun settingToolbar(){
         fragmentMemoReadBinding.apply {
             toolbarMemoRead.apply {
-
-                // 타이틀 및 메뉴 설정
+                // 타이틀
                 title = "메모 보기"
-                inflateMenu(R.menu.memo_read_menu)
-
                 // Back
                 setNavigationIcon(R.drawable.arrow_back_24px)
                 setNavigationOnClickListener {
                     backProcess()
                 }
-                
-                // 메뉴 아이템
+                // 메뉴
+                inflateMenu(R.menu.memo_read_menu)
                 setOnMenuItemClickListener {
-                    when(it.itemId) {
+                    when(it.itemId){
                         // 수정
                         R.id.menuItemMemoReadModify -> {
-                            mainActivity.replaceFragment(FragmentName.MEMO_MODIFY_FRAGMENT, true, false, null)
+                            mainActivity.replaceFragment(FragmentName.MEMO_MODIFY_FRAGMENT, true, true, null)
                         }
                         // 삭제
                         R.id.menuItemMemoReadDelete -> {
@@ -62,17 +59,25 @@ class MemoReadFragment : Fragment() {
                             materialAlertDialogBuilder.show()
                         }
                     }
+
                     true
                 }
             }
         }
     }
-    
+
     // textField의 내용을 설정해준다.
     fun settingTextField(){
-        fragmentMemoReadBinding.textFieldMemoReadSubject.setText("제목입니다")
-        fragmentMemoReadBinding.textFieldMemoReadDate.setText("2024-10-10")
-        fragmentMemoReadBinding.textFieldMemoReadText.setText("내용입니다")
+
+        // 글의 인덱스 번호를 가져온다.
+        val memoIdx = arguments?.getInt("memoIdx")!!
+
+        // 현재 글을 가져온다.
+        val memoModel = MemoDao.selectMemoDataOne(mainActivity, memoIdx)
+
+        fragmentMemoReadBinding.textFieldMemoReadSubject.setText(memoModel.memoSubject)
+        fragmentMemoReadBinding.textFieldMemoReadText.setText(memoModel.memoText)
+        fragmentMemoReadBinding.textFieldMemoReadDate.setText(memoModel.memoDate)
     }
 
     // 뒤로가기 처리
@@ -81,3 +86,10 @@ class MemoReadFragment : Fragment() {
         mainActivity.removeFragment(FragmentName.MEMO_ADD_FRAGMENT)
     }
 }
+
+
+
+
+
+
+
