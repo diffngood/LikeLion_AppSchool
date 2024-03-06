@@ -3,18 +3,20 @@ package kr.co.lion.androidproject4boardapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.transition.MaterialSharedAxis
-import kr.co.lion.androidproject4boardapp.databinding.ActivityMainBinding
+import kr.co.lion.androidproject4boardapp.databinding.ActivityContentBinding
+import kr.co.lion.androidproject4boardapp.databinding.HeaderContentDrawerBinding
+import kr.co.lion.androidproject4boardapp.fragment.AddContentFragment
 import kr.co.lion.androidproject4boardapp.fragment.AddUserInfoFragment
 import kr.co.lion.androidproject4boardapp.fragment.JoinFragment
 import kr.co.lion.androidproject4boardapp.fragment.LoginFragment
+import kr.co.lion.androidproject4boardapp.fragment.MainFragment
 
-class MainActivity : AppCompatActivity() {
+class ContentActivity : AppCompatActivity() {
 
-    lateinit var activityMainBinding: ActivityMainBinding
+    lateinit var activityContentBinding: ActivityContentBinding
 
     // 프레그먼트의 주소 값을 담을 프로퍼티
     var oldFragment: Fragment? = null
@@ -23,14 +25,65 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 스플래쉬 스크린이 나타나게 한다.
-        // 반드시 setContentView 전에 해야 한다.
-        installSplashScreen()
+        activityContentBinding = ActivityContentBinding.inflate(layoutInflater)
+        setContentView(activityContentBinding.root)
 
-        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(activityMainBinding.root)
+//        activityContentBinding.buttonTest.setOnClickListener {
+//            activityContentBinding.drawerLayoutContent.open()
+//        }
 
-        replaceFragment(MainFragmentName.LOGIN_FRAGMENT, false, false, null)
+        settingNavigationView()
+
+        // MainFragment가 나타나도록 한다.
+        replaceFragment(ContentFragmentName.MAIN_FRAGMENT, false, false, null)
+    }
+
+    // 네비게이션 뷰 설정
+    fun settingNavigationView(){
+        activityContentBinding.apply {
+            navigationViewContent.apply {
+                // 헤더로 보여줄 View를 생성한다.
+                val headerContentDrawerBinding = HeaderContentDrawerBinding.inflate(layoutInflater)
+                // 헤더로 보여줄 View를 설정한다.
+                addHeaderView(headerContentDrawerBinding.root)
+
+                // 사용자 닉네임을 설정한다.
+                headerContentDrawerBinding.headerContentDrawerNickName.text = "홍길동님"
+
+                // 메뉴를 눌렀을 때 동작하는 리스너
+                setNavigationItemSelectedListener {
+
+                    // 딜레이
+                    SystemClock.sleep(100)
+
+                    when(it.itemId){
+                        // 전체 게시판
+                        R.id.menuItemContentNavigationAll -> {
+                            drawerLayoutContent.close()
+                        }
+                        // 자유 게시판
+                        R.id.menuItemContentNavigation1 -> {
+                            drawerLayoutContent.close()
+                        }
+                        // 유머 게시판
+                        R.id.menuItemContentNavigation2 -> {
+                            drawerLayoutContent.close()
+                        }
+                        // 시사 게시판
+                        R.id.menuItemContentNavigation3 -> {
+                            drawerLayoutContent.close()
+                        }
+                        // 스포츠 게시판
+                        R.id.menuItemContentNavigation4 -> {
+                            drawerLayoutContent.close()
+                        }
+                    }
+
+                    true
+                }
+
+            }
+        }
     }
 
     // 지정한 Fragment를 보여주는 메서드
@@ -38,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     // addToBackStack : BackStack에 포함 시킬 것인지
     // isAnimate : 애니메이션을 보여줄 것인지
     // data : 새로운 프래그먼트에 전달할 값이 담겨져 있는 Bundle 객체
-    fun replaceFragment(name: MainFragmentName, addToBackStack: Boolean, isAnimate: Boolean, data: Bundle?){
+    fun replaceFragment(name: ContentFragmentName, addToBackStack: Boolean, isAnimate: Boolean, data: Bundle?){
 
         SystemClock.sleep(200)
 
@@ -53,20 +106,14 @@ class MainActivity : AppCompatActivity() {
         // 이름으로 분기한다.
         // Fragment의 객체를 생성하여 변수에 담아준다.
         when(name){
-            // 로그인 화면
-            MainFragmentName.LOGIN_FRAGMENT -> {
-                newFragment = LoginFragment()
+            // 게시글 목록 화면
+            ContentFragmentName.MAIN_FRAGMENT -> {
+                newFragment = MainFragment()
+
             }
             // 회원가입 화면 (1)
-            MainFragmentName.JOIN_FRAGMENT -> {
-                newFragment = JoinFragment()
-            }
-            // 회원가입 화면 (2)
-            MainFragmentName.ADD_USER_INFO_FRAGMENT -> {
-                newFragment = AddUserInfoFragment()
-            }
-            MainFragmentName.A -> {
-
+            ContentFragmentName.ADD_CONTENT_FRAGMENT -> {
+                newFragment = AddContentFragment()
             }
         }
 
@@ -117,7 +164,7 @@ class MainActivity : AppCompatActivity() {
             // Fragment를 교체한다.(이전 Fragment가 없으면 새롭게 추가하는 역할을 수행한다)
             // 첫 번째 매개 변수 : Fragment를 배치할 FragmentContainerView의 ID
             // 두 번째 매개 변수 : 보여주고하는 Fragment 객체를
-            fragmentTransaction.replace(R.id.containerMain, newFragment!!)
+            fragmentTransaction.replace(R.id.containerContent, newFragment!!)
 
             // addToBackStack 변수의 값이 true면 새롭게 보여질 Fragment를 BackStack에 포함시켜 준다.
             if(addToBackStack == true){
@@ -130,7 +177,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // BackStack에서 Fragment를 제거한다.
-    fun removeFragment(name: MainFragmentName){
+    fun removeFragment(name: ContentFragmentName){
         SystemClock.sleep(200)
 
         // 지정한 이름으로 있는 Fragment를 BackStack에서 제거한다.

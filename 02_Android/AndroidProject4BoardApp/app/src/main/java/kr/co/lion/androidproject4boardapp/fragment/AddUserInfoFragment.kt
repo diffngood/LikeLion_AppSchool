@@ -8,47 +8,49 @@ import android.view.ViewGroup
 import kr.co.lion.androidproject4boardapp.MainActivity
 import kr.co.lion.androidproject4boardapp.MainFragmentName
 import kr.co.lion.androidproject4boardapp.R
-import kr.co.lion.androidproject4boardapp.databinding.FragmentJoinBinding
+import kr.co.lion.androidproject4boardapp.databinding.FragmentAddUserInfoBinding
 
-class JoinFragment : Fragment() {
+class AddUserInfoFragment : Fragment() {
 
-    lateinit var fragmentJoinBinding: FragmentJoinBinding
+    lateinit var fragmentAddUserInfoBinding: FragmentAddUserInfoBinding
     lateinit var mainActivity: MainActivity
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        fragmentJoinBinding = FragmentJoinBinding.inflate(inflater)
+        fragmentAddUserInfoBinding = FragmentAddUserInfoBinding.inflate(inflater)
         mainActivity = activity as MainActivity
 
         settingToolbar()
-        settingButtonJoinNext()
+        settingButtonAddUserInfoSubmit()
 
-        return fragmentJoinBinding.root
+        return fragmentAddUserInfoBinding.root
     }
 
     // 툴바 설정
     fun settingToolbar(){
-        fragmentJoinBinding.apply {
-            toolbarJoin.apply {
+        fragmentAddUserInfoBinding.apply {
+            toolbarAddUserInfo.apply {
                 // 타이틀
                 title = "회원가입"
                 // Back
                 setNavigationIcon(R.drawable.arrow_back_24px)
                 setNavigationOnClickListener {
                     // 이전 화면으로 간다.
-                    mainActivity.removeFragment(MainFragmentName.JOIN_FRAGMENT)
+                    mainActivity.removeFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT)
                 }
             }
         }
     }
-
-    fun settingButtonJoinNext(){
-        fragmentJoinBinding.apply {
-            buttonJoinNext.apply {
-                // 버튼을 눌렀을 때
-                setOnClickListener {
-                    // AddUserInfoFragment를 보여준다.
-                    mainActivity.replaceFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT, true, true, null)
+    
+    // 가입 버튼
+    fun settingButtonAddUserInfoSubmit(){
+        fragmentAddUserInfoBinding.apply { 
+            buttonAddUserInfoSubmit.apply { 
+                // 눌렀을 때
+                setOnClickListener { 
+                    mainActivity.removeFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT)
+                    mainActivity.removeFragment(MainFragmentName.JOIN_FRAGMENT)
                 }
             }
         }

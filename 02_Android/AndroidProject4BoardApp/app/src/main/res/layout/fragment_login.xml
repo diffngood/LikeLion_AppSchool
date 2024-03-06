@@ -74,7 +74,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/view"
+                android:id="@+id/toggleAddUserInfoGender"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="10dp"
