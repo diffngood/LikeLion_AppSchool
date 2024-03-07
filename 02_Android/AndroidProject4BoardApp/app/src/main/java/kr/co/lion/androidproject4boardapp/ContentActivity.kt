@@ -13,6 +13,9 @@ import kr.co.lion.androidproject4boardapp.fragment.AddUserInfoFragment
 import kr.co.lion.androidproject4boardapp.fragment.JoinFragment
 import kr.co.lion.androidproject4boardapp.fragment.LoginFragment
 import kr.co.lion.androidproject4boardapp.fragment.MainFragment
+import kr.co.lion.androidproject4boardapp.fragment.ModifyContentFragment
+import kr.co.lion.androidproject4boardapp.fragment.ModifyUserFragment
+import kr.co.lion.androidproject4boardapp.fragment.ReadContentFragment
 
 class ContentActivity : AppCompatActivity() {
 
@@ -56,7 +59,7 @@ class ContentActivity : AppCompatActivity() {
                     // 딜레이
                     SystemClock.sleep(100)
 
-                    when(it.itemId){
+                    when(it.itemId) {
                         // 전체 게시판
                         R.id.menuItemContentNavigationAll -> {
                             drawerLayoutContent.close()
@@ -77,8 +80,22 @@ class ContentActivity : AppCompatActivity() {
                         R.id.menuItemContentNavigation4 -> {
                             drawerLayoutContent.close()
                         }
-                    }
+                        // 사용자 정보 수정
+                        R.id.menuItemContentNavigationModifyUserInfo -> {
+                            replaceFragment(ContentFragmentName.MODIFY_USER_FRAGMENT, false, false, null)
+                            // NavigationView를 닫아준다
+                            drawerLayoutContent.close()
+                        }
+                        // 로그아웃
+                        R.id.menuItemContentNavigationLogout -> {
 
+                        }
+                        // 회원 탈퇴
+                        R.id.menuItemContentNavigationSignOut -> {
+
+
+                        }
+                    }
                     true
                 }
 
@@ -111,9 +128,21 @@ class ContentActivity : AppCompatActivity() {
                 newFragment = MainFragment()
 
             }
-            // 회원가입 화면 (1)
+            // 게시글 작성 화면
             ContentFragmentName.ADD_CONTENT_FRAGMENT -> {
                 newFragment = AddContentFragment()
+            }
+            // 게시글 읽기 화면
+            ContentFragmentName.READ_CONTENT_FRAGMENT -> {
+                newFragment = ReadContentFragment()
+            }
+            // 게시글 수정 화면
+            ContentFragmentName.MODIFY_CONTENT_FRAGMENT -> {
+                newFragment = ModifyContentFragment()
+            }
+            // 사용자 정보 수정 화면
+            ContentFragmentName.MODIFY_USER_FRAGMENT -> {
+                newFragment = ModifyUserFragment()
             }
         }
 
