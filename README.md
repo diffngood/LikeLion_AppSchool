@@ -15,3 +15,33 @@
 <hr/>
 
 ## Android
+##### 다양한 레이아웃들, TextView, Button, EditText, TextInputLayout
+##### ImageView, ToggleButton, CheckBox, RadioButton, Switch
+##### CheckedTextView, Chip, ProgressBar, SeekBar, RatingBar
+##### ScrollView, CardView, ListView, Spinner, GridView, ViewPager, RecyclerView
+##### 안드로이드 권한, Option Menu, Context Menu, Popup Menu
+##### Activty의 개념 및 실행, 데이터 전달, 객체 전달, ActivityAction
+##### Toast, SnackBar, ListDialog
+##### Notification, PendingIntent, 다양한 Notification
+##### Fragment, ListFragment, DialogFragment
+##### ActionBar
+##### Toolbar
+##### ViewPager
+##### AppbarLayout, TabLayout
+##### DrawerLayout
+##### Service, IPC
+##### SQLiteDataBase
+##### Content Provider
+##### Preferences
+##### 이미지 관리, 지역화, 해상도 대응, 회전 대응
+##### raw, asset
+##### 단말기 정보 파악하기, 다양한 센서 사용하기, 방위값 측정하기, GPS 사용하기, 사진 가져오기
+##### 구글 맵 사용하기, 현재 위치 사용하기
+##### 현재위치 표시하기, 주변 정보 표시하기, Socket 서버 만들기
+##### Socket 클라이언트 만들기
+##### HTTP 통신 기초, 네이버 open api 활용하기
+##### 디자인패턴 MVC, MVP, MVVM
+##### Coroutine
+##### 게시판 서비스 프로젝트 개발 (화면 구성, 서버 구성, 서버와의 연동 기능 구현, 테스트 및 디버깅)
+
+<hr/>
