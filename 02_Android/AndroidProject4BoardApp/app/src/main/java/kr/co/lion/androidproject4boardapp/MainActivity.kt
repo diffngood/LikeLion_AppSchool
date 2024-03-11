@@ -65,9 +65,6 @@ class MainActivity : AppCompatActivity() {
             MainFragmentName.ADD_USER_INFO_FRAGMENT -> {
                 newFragment = AddUserInfoFragment()
             }
-            MainFragmentName.A -> {
-
-            }
         }
 
         // 새로운 Fragment에 전달할 객체가 있다면 arguments 프로퍼티에 넣어준다.
