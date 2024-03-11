@@ -43,5 +43,6 @@
 ##### 디자인패턴 MVC, MVP, MVVM
 ##### Coroutine
 ##### 게시판 서비스 프로젝트 개발 (화면 구성, 서버 구성, 서버와의 연동 기능 구현, 테스트 및 디버깅)
+##### 게시판 서비스 프로젝트 : 02_Android → AndroidProject4BoardApp
 
 <hr/>
