@@ -6,24 +6,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.databinding.DataBindingUtil
 import kr.co.lion.androidproject4boardapp.ContentActivity
 import kr.co.lion.androidproject4boardapp.ContentFragmentName
 import kr.co.lion.androidproject4boardapp.R
 import kr.co.lion.androidproject4boardapp.databinding.FragmentReadContentBinding
+import kr.co.lion.androidproject4boardapp.viewmodel.ReadContentViewModel
 
 class ReadContentFragment : Fragment() {
 
     lateinit var fragmentReadContentBinding: FragmentReadContentBinding
     lateinit var contentActivity: ContentActivity
 
+    lateinit var readContentViewModel: ReadContentViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        fragmentReadContentBinding = FragmentReadContentBinding.inflate(inflater)
+        // fragmentReadContentBinding = FragmentReadContentBinding.inflate(inflater)
+        fragmentReadContentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_read_content, container, false)
+        readContentViewModel = ReadContentViewModel()
+        fragmentReadContentBinding.readContentViewModel = readContentViewModel
+        fragmentReadContentBinding.lifecycleOwner = this
+
         contentActivity = activity as ContentActivity
 
         settingToolbarReadContent()
         settingBackButton()
+        settingInputForm()
 
         return fragmentReadContentBinding.root
     }
@@ -65,7 +75,7 @@ class ReadContentFragment : Fragment() {
         }
     }
 
-    // Back Button 눌렀을 때
+    // Back button 눌렀을 때
     fun settingBackButton(){
         contentActivity.onBackPressedDispatcher.addCallback {
             // 뒤로가기 처리 메서드 호출
@@ -81,10 +91,18 @@ class ReadContentFragment : Fragment() {
         contentActivity.removeFragment(ContentFragmentName.ADD_CONTENT_FRAGMENT)
     }
 
-    // 댓글을 보여줄 BottomSheet를 띄워준다.
+    // 댓글을 보여불 BottomSheet를 띄워준다.
     fun showReplyBottomSheet(){
         val readContentBottomFragment = ReadContentBottomFragment()
         readContentBottomFragment.show(contentActivity.supportFragmentManager, "ReplyBottomSheet")
     }
 
+    // 입력 요소에 값을 넣어준다.
+    fun settingInputForm(){
+        readContentViewModel.textFieldReadContentSubject.value = "제목입니다"
+        readContentViewModel.textFieldReadContentType.value = "자유게시판"
+        readContentViewModel.textFieldReadContentNickName.value = "홍길동"
+        readContentViewModel.textFieldReadContentDate.value = "2024-03-12"
+        readContentViewModel.textFieldReadContentText.value ="내용입니다"
+    }
 }

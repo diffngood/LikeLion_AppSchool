@@ -4,29 +4,21 @@
 
     <item
         android:id="@+id/menuItemAddContentCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:icon="@drawable/photo_camera_24px"
         android:title="카메라"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menuItemAddContentAlbum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/menuItemModifyContentAlbum"
         android:icon="@drawable/photo_album_24px"
         android:title="앨범"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menuItemAddContentReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/device_reset_24px"
+        android:id="@+id/menuItemModifyContentReset"
+        android:icon="@drawable/clear_all_24px"
         android:title="초기화"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menuItemAddContentDone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/menuItemModifyContentDone"
         android:icon="@drawable/done_24px"
         android:title="완료"
         app:showAsAction="always" />

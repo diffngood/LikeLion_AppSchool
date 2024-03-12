@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644287017501",
+    "project_id": "contentapp-43bfb",
+    "storage_bucket": "contentapp-43bfb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644287017501:android:9a3419fd21ad9649b80cf4",
+        "android_client_info": {
+          "package_name": "kr.co.lion.androidproject4boardapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBecd20ING2jXDSXdqu86Egxit0DgARsuw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import kr.co.lion.androidproject4boardapp.MainActivity
 import kr.co.lion.androidproject4boardapp.MainFragmentName
@@ -18,7 +19,11 @@ class JoinFragment : Fragment() {
 
     lateinit var fragmentJoinBinding: FragmentJoinBinding
     lateinit var mainActivity: MainActivity
-    lateinit var  joinViewModel: JoinViewModel
+    lateinit var joinViewModel: JoinViewModel
+
+    // 아이디 중복 확인 검사를 했는지...
+    // true면 아이디 중복 확인 검사를 완료한 것으로 취급한다.
+    var checkUserIdExist = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -40,14 +45,17 @@ class JoinFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         settingToolbar()
-        settingButtonJoinNext()
         settingTextField()
+        // 중복확인 버튼
+        settingButtonJoinCheckedId()
+        // 다음 버튼
+        settingButtonJoinNext()
 
         return fragmentJoinBinding.root
     }
 
     // 툴바 설정
-    fun settingToolbar(){
+    fun settingToolbar() {
 
         // 타이틀 설정
         joinViewModel.toolbarJoinTitle.value = "회원가입"
@@ -64,26 +72,92 @@ class JoinFragment : Fragment() {
         }
     }
 
-    fun settingButtonJoinNext(){
-        fragmentJoinBinding.apply {
-            buttonJoinNext.apply {
-                // 버튼을 눌렀을 때
-                setOnClickListener {
-                    // AddUserInfoFragment를 보여준다.
-                    mainActivity.replaceFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT, true, true, null)
-                }
-            }
-        }
-    }
-
     // 입력요소 초기설정
-    fun settingTextField(){
+    fun settingTextField() {
         // 입력 요소들을 초기화 한다.
         joinViewModel.textFieldJoinUserId.value = ""
         joinViewModel.textFieldJoinUserPw.value = ""
         joinViewModel.textFieldJoinUserPw2.value = ""
         // 첫 번째 입력 요소에 포커스를 준다.
         Tools.showSoftInput(mainActivity, fragmentJoinBinding.textFieldJoinUserId)
+        // 아이디 입력요소의 값을 변경하면 중복확인 여부 변수 값을 false로 설정한다.
+        fragmentJoinBinding.textFieldJoinUserId.addTextChangedListener {
+            checkUserIdExist = false
+        }
+    }
+
+    // 중복확인 버튼
+    fun settingButtonJoinCheckedId() {
+        fragmentJoinBinding.apply {
+            buttonJoinCheckId.setOnClickListener {
+                checkUserIdExist = true
+
+            }
+        }
+    }
+
+    // 다음 버튼
+    fun settingButtonJoinNext() {
+        fragmentJoinBinding.apply {
+            buttonJoinNext.apply {
+                // 버튼을 눌렀을 때
+                setOnClickListener {
+                    // 입력을 검사한다.
+                    val chk = checkTextInput()
+
+                    // 입력이 모두 잘 되어 있다면...
+                    if (chk == true) {
+                        // 키보드 내려준다.
+                        Tools.hideSoftInput(mainActivity)
+                        // AddUserInfoFragment를 보여준다.
+                        mainActivity.replaceFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT, true, true, null)
+                    }
+                }
+            }
+        }
+    }
+
+    // 입력요소 유효성 검사 메서드
+    fun checkTextInput(): Boolean {
+
+        // 사용자가 입력한 내용을 가져온다.
+        val userId = joinViewModel.textFieldJoinUserId.value!!
+        val userPw = joinViewModel.textFieldJoinUserPw.value!!
+        val userPw2 = joinViewModel.textFieldJoinUserPw2.value!!
+
+        // 아이디를 입력하지 않았다면
+        if (userId.isEmpty()) {
+            Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserId, "아이디 입력 오류", "아이디를 입력해주세요")
+            return false
+        }
+
+        // 비밀번호를 입력하지 않았다면
+        if (userPw.isEmpty()) {
+            Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserPw, "비밀번호 입력 오류", "비밀번호를 입력해주세요")
+            return false
+        }
+
+        // 비밀번호 확인을 입력하지 않았다면
+        if (userPw2.isEmpty()) {
+            Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserPw2, "비밀번호 입력 오류", "비밀번호 확인을 입력해주세요")
+            return false
+        }
+
+        // 입력한 비밀번호가 다르다면
+        if (userPw != userPw2) {
+            joinViewModel.textFieldJoinUserPw.value = ""
+            joinViewModel.textFieldJoinUserPw2.value = ""
+            Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserPw, "비밀번호 입력 오류", "비밀번호가 다릅니다")
+            return false
+        }
+        
+        // 아이디 중복확인을 하지 않았다면...
+        if (checkUserIdExist == false) {
+            Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserId, "아이디 중복 확인 오류", "아이디 중복확인을 해주세요")
+            return false
+        }
+
+        return true
     }
 
 }

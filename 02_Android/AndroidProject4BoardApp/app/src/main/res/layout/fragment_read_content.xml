@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="readContentViewModel"
+            type="kr.co.lion.androidproject4boardapp.viewmodel.ReadContentViewModel" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,7 +48,8 @@
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:inputType="text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@{readContentViewModel.textFieldReadContentSubject}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -59,7 +66,8 @@
                         android:clickable="false"
                         android:cursorVisible="true"
                         android:focusable="false"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@{readContentViewModel.textFieldReadContentType}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -77,7 +85,8 @@
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:inputType="text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@{readContentViewModel.textFieldReadContentNickName}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -95,7 +104,8 @@
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:inputType="text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@{readContentViewModel.textFieldReadContentDate}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -113,7 +123,8 @@
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:inputType="text"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:text="@{readContentViewModel.textFieldReadContentText}"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageView
