@@ -55,5 +55,8 @@ dependencies {
     // firebase 추가 등록
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
-    
+
+    // firestore 추가 등록
+    implementation("com.google.firebase:firebase-firestore:24.10.3")
+
 }

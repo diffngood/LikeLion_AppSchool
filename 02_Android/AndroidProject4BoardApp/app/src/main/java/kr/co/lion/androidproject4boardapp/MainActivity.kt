@@ -3,10 +3,19 @@ package kr.co.lion.androidproject4boardapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.transition.MaterialSharedAxis
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import android.Manifest
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kr.co.lion.androidproject4boardapp.databinding.ActivityMainBinding
 import kr.co.lion.androidproject4boardapp.fragment.AddUserInfoFragment
 import kr.co.lion.androidproject4boardapp.fragment.JoinFragment
@@ -20,6 +29,12 @@ class MainActivity : AppCompatActivity() {
     var oldFragment: Fragment? = null
     var newFragment: Fragment? = null
 
+    // 확인할 권한 목록
+    val permissionList = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.ACCESS_MEDIA_LOCATION
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,6 +44,14 @@ class MainActivity : AppCompatActivity() {
 
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
+
+        // 권한 확인
+        requestPermissions(permissionList, 0)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = fsTest()
+            Log.d("test1234", "result : $result")
+        }
 
         replaceFragment(MainFragmentName.LOGIN_FRAGMENT, false, false, null)
     }
@@ -133,4 +156,40 @@ class MainActivity : AppCompatActivity() {
         // 지정한 이름으로 있는 Fragment를 BackStack에서 제거한다.
         supportFragmentManager.popBackStack(name.str, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
+
+    suspend fun fsTest(): Long{
+
+        var result = 0L
+
+        // 컬렉션에 접근한다.
+        val collection = Firebase.firestore.collection("c1")
+
+        // 코루틴을 가동시킨다.
+        val job1 = CoroutineScope(Dispatchers.IO).launch {
+            // 컬렉션에 접근하여 모든 문서를 가져온다.
+            // 코루틴 내부에서 await을 사용하면 작업이 완료될 때 까지 대기했다가
+            // 작업이 완료되면 값을 반환 받을 수 있다.
+            val data = collection.get().await()
+
+            // 가져온 문서의 수 만큼 반복한다.
+            data.documents?.forEach {
+                // 문서로 부터 필드값을 가지고와서 출력한다.
+                val f1 = it?.getString("f1")
+                val f2 = it?.getLong("f2")
+
+                result += f2!!
+
+                Log.d("test1234", "f1 : $f1")
+                Log.d("test1234", "f2 : $f2")
+            }
+        }
+
+        // 코루틴 수행이 모두 끝날 때 까지 대기하게 한다.
+        // 코루틴 내부의 코드가 다 끝난 다음 return 이 수행될 수 있도록 한다.
+        job1.join()
+
+        return result
+    }
+
+
 }
