@@ -1,17 +1,23 @@
 package kr.co.lion.androidproject4boardapp.fragment
 
+import android.graphics.Paint.DITHER_FLAG
 import android.graphics.Paint.Join
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kr.co.lion.androidproject4boardapp.MainActivity
 import kr.co.lion.androidproject4boardapp.MainFragmentName
 import kr.co.lion.androidproject4boardapp.R
 import kr.co.lion.androidproject4boardapp.Tools
+import kr.co.lion.androidproject4boardapp.dao.UserDao
 import kr.co.lion.androidproject4boardapp.databinding.FragmentJoinBinding
 import kr.co.lion.androidproject4boardapp.viewmodel.JoinViewModel
 
@@ -90,7 +96,12 @@ class JoinFragment : Fragment() {
     fun settingButtonJoinCheckedId() {
         fragmentJoinBinding.apply {
             buttonJoinCheckId.setOnClickListener {
-                checkUserIdExist = true
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    checkUserIdExist = UserDao.checkUserIdExist(joinViewModel?.textFieldJoinUserId?.value!!)
+                    Log.d("test1234", "중복확인 상태 : $checkUserIdExist")
+                }
+//                checkUserIdExist = true
 
             }
         }
@@ -108,9 +119,10 @@ class JoinFragment : Fragment() {
                     // 입력이 모두 잘 되어 있다면...
                     if (chk == true) {
                         // 키보드 내려준다.
-                        Tools.hideSoftInput(mainActivity)
+                        // Tools.hideSoftInput(mainActivity)
                         // AddUserInfoFragment를 보여준다.
-                        mainActivity.replaceFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT, true, true, null)
+                        // mainActivity.replaceFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT, true, true, null)
+                        joinNext()
                     }
                 }
             }
@@ -158,6 +170,19 @@ class JoinFragment : Fragment() {
         }
 
         return true
+    }
+
+    // 다음 과정으로 이동한다
+    fun joinNext() {
+        // 사용자가 입력한 데이터를 담는다
+        val joinBundle = Bundle()
+        joinBundle.putString("joinUserId", joinViewModel.textFieldJoinUserId.value!!)
+        joinBundle.putString("joinUserPw", joinViewModel.textFieldJoinUserPw.value!!)
+
+        // 키보드 내려준다.
+        Tools.hideSoftInput(mainActivity)
+        // AddUserInfoFragment를 보여준다.
+        mainActivity.replaceFragment(MainFragmentName.ADD_USER_INFO_FRAGMENT, true, true, joinBundle)
     }
 
 }

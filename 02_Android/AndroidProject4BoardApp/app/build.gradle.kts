@@ -58,5 +58,6 @@ dependencies {
 
     // firestore 추가 등록
     implementation("com.google.firebase:firebase-firestore:24.10.3")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 
 }

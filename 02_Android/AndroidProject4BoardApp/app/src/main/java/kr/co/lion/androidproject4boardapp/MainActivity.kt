@@ -48,10 +48,11 @@ class MainActivity : AppCompatActivity() {
         // 권한 확인
         requestPermissions(permissionList, 0)
 
+        /*
         CoroutineScope(Dispatchers.Main).launch {
             val result = fsTest()
             Log.d("test1234", "result : $result")
-        }
+        } */
 
         replaceFragment(MainFragmentName.LOGIN_FRAGMENT, false, false, null)
     }
