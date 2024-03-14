@@ -54,7 +54,7 @@ class JoinFragment : Fragment() {
         settingToolbar()
         settingTextField()
         // 중복확인 버튼
-        settingButtonJoinCheckedId()
+        settingButtonJoinCheckId()
         // 다음 버튼
         settingButtonJoinNext()
 
@@ -94,28 +94,30 @@ class JoinFragment : Fragment() {
     }
 
     // 중복확인 버튼
-    fun settingButtonJoinCheckedId() {
+    fun settingButtonJoinCheckId(){
         fragmentJoinBinding.apply {
-            buttonJoinCheckId.setOnClickListener {
+            buttonJoinCheckId.apply {
+                setOnClickListener {
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    checkUserIdExist = UserDao.checkUserIdExist(joinViewModel?.textFieldJoinUserId?.value!!)
-                    Log.d("test1234", "중복확인 상태 : $checkUserIdExist")
+                    CoroutineScope(Dispatchers.Main).launch {
+                        checkUserIdExist = UserDao.checkUserIdExist(joinViewModel?.textFieldJoinUserId?.value!!)
+                        // Log.d("test1234", "$checkUserIdExist")
 
-                    if(checkUserIdExist == false) {
-                        joinViewModel?.textFieldJoinUserId?.value = ""
-                        Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserId,
-                            "아이디 입력 오류", "존재하는 아이디입니다\n다른 아이디를 입력해주세요")
-                    } else {
-                        val materialAlertDialogBuilder = MaterialAlertDialogBuilder(mainActivity)
-                        materialAlertDialogBuilder.setTitle("아이디 입력 오류")
-                        materialAlertDialogBuilder.setMessage("사용 가능한 아이디 입니다")
-                        materialAlertDialogBuilder.setPositiveButton("확인", null)
-                        materialAlertDialogBuilder.show()
+                        if(checkUserIdExist == false) {
+                            joinViewModel?.textFieldJoinUserId?.value = ""
+                            Tools.showErrorDialog(mainActivity, fragmentJoinBinding.textFieldJoinUserId,
+                                "아이디 입력 오류", "존재하는 아이디입니다\n다른 아이디를 입력해주세요")
+                        } else {
+                            val materialAlertDialogBuilder = MaterialAlertDialogBuilder(mainActivity)
+                            materialAlertDialogBuilder.setTitle("아이디 입력 오류")
+                            materialAlertDialogBuilder.setMessage("사용 가능한 아이디 입니다")
+                            materialAlertDialogBuilder.setPositiveButton("확인", null)
+                            materialAlertDialogBuilder.show()
+                        }
+
                     }
+                    // checkUserIdExist = true
                 }
-//                checkUserIdExist = true
-
             }
         }
     }
