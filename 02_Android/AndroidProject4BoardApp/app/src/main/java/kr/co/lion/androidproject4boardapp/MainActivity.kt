@@ -14,6 +14,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.Manifest
+import android.content.Intent
+import android.view.Display.Mode
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kr.co.lion.androidproject4boardapp.databinding.ActivityMainBinding
@@ -48,13 +50,36 @@ class MainActivity : AppCompatActivity() {
         // 권한 확인
         requestPermissions(permissionList, 0)
 
+        // 자동로그인시 저장된 사용자 정보를 가져온다.
+        val sharedPreferences = getSharedPreferences("AutoLogin", MODE_PRIVATE)
+        val loginUserIdx = sharedPreferences.getInt("loginUserIdx", -1)
+        val loginUserNickName = sharedPreferences.getString("loginUserNickName", null)
+
+        // 자동 로그인시 저장된 사용자 인덱스값이 없다면(자동로그인을 체크하지 않았다면)
+        if(loginUserIdx == -1) {
+            // 첫 화면을 띄워준다.
+            replaceFragment(MainFragmentName.LOGIN_FRAGMENT, false, false, null)
+        }
+        // 그렇지 않으면
+        else {
+            // ContentActivity를 실행한다.
+            val contentIntent = Intent(this, ContentActivity::class.java)
+
+            // 로그인한 사용자의 정보를 전달해준다.
+            contentIntent.putExtra("loginUserIdx", loginUserIdx)
+            contentIntent.putExtra("loginUserNickName", loginUserNickName)
+
+            startActivity(contentIntent)
+            // MainActivity를 종료한다.
+            finish()
+        }
+
         /*
         CoroutineScope(Dispatchers.Main).launch {
             val result = fsTest()
             Log.d("test1234", "result : $result")
         } */
 
-        replaceFragment(MainFragmentName.LOGIN_FRAGMENT, false, false, null)
     }
 
     // 지정한 Fragment를 보여주는 메서드
