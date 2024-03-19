@@ -42,7 +42,11 @@
 ##### HTTP 통신 기초, 네이버 open api 활용하기
 ##### 디자인패턴 MVC, MVP, MVVM
 ##### Coroutine
-##### 게시판 서비스 프로젝트 개발 (화면 구성, 서버 구성, 서버와의 연동 기능 구현, 테스트 및 디버깅)
-##### 게시판 서비스 프로젝트 : 02_Android → AndroidProject4BoardApp
+
+<hr/>
+
+### 🎯 게시판 서비스 프로젝트 개발 : 02_Android → AndroidProject4BoardApp
+#### MVVM 모델 적용, Coroutine 사용, Firebase 연동
+##### (화면 구성, 서버 구성, 서버와의 연동 기능 구현, 테스트 및 디버깅)
 
 <hr/>
