@@ -121,7 +121,7 @@ class ModifyContentFragment : Fragment() {
 
                             if(chk == true){
                                 updateContentData()
-//                                contentActivity.removeFragment(ContentFragmentName.MODIFY_CONTENT_FRAGMENT)
+                                // contentActivity.removeFragment(ContentFragmentName.MODIFY_CONTENT_FRAGMENT)
                             }
                         }
                     }

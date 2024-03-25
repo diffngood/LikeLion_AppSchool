@@ -194,7 +194,7 @@ class ContentDao {
                 val query = collectionReference.whereEqualTo("contentIdx", contentModel.contentIdx).get().await()
 
                 // 저장할 데이터를 담을 HashMap을 만들어준다.
-                val map = mutableMapOf<String, Any>()
+                val map = mutableMapOf<String, Any?>()
                 map["contentSubject"] = contentModel.contentSubject
                 map["contentText"] = contentModel.contentText
                 map["contentType"] = contentModel.contentType
@@ -204,7 +204,7 @@ class ContentDao {
                 }
                 // 저장한다.
                 // 가져온 문서 중 첫 번째 문서에 접근하여 데이터를 수정한다.
-                query.documents[0].reference.set(map)
+                query.documents[0].reference.update(map)
             }
             job1.join()
         }
