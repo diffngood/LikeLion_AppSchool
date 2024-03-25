@@ -104,9 +104,7 @@ class AddContentFragment : Fragment() {
 
                             if(chk == true) {
                                 // 글 데이터를 업로드한다.
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    uploadContentData()
-                                }
+                                uploadContentData()
                                 // ReadContentFragment로 이동한다.
                                 // contentActivity.replaceFragment(ContentFragmentName.READ_CONTENT_FRAGMENT, true, true, null)
                             }
@@ -256,15 +254,15 @@ class AddContentFragment : Fragment() {
     }
 
     // 글 작성처리 메서드
-    suspend fun uploadContentData(){
-        CoroutineScope(Dispatchers.IO).launch {
-            
+    fun uploadContentData(){
+        CoroutineScope(Dispatchers.Main).launch {
+
             // 서버에서의 첨부 이미지 파일 이름
-            var serverFileName: String? = null
-            
+            var serverFileName:String? = null
+
             // 첨부된 이미지가 있다면
-            if (isAddPicture == true) {
-                // 이미지 뷰의 이미지 데이터를 파일로 저장한다.
+            if(isAddPicture == true) {
+                // 이미지의 뷰의 이미지 데이터를 파일로 저장한다.
                 Tools.saveImageViewData(contentActivity, fragmentAddContentBinding.imageViewAddContent, "uploadTemp.jpg")
                 // 서버에서의 파일 이름
                 serverFileName = "image_${System.currentTimeMillis()}.jpg"
@@ -278,23 +276,29 @@ class AddContentFragment : Fragment() {
             ContentDao.updateContentSequence(contentSequence + 1)
 
             // 업로드할 정보를 담아준다.
-            val contentIdx = contentSequence
+            val contentIdx = contentSequence + 1
             val contentSubject = addContentViewModel.textFieldAddContentSubject.value!!
             val contentType = addContentViewModel.gettingContentType().number
             val contentText = addContentViewModel.textFieldAddContentText.value!!
             val contentImage = serverFileName
             val contentWriterIdx = contentActivity.loginUserIdx
-            val simpleDataFormat = SimpleDateFormat("yyyy-MM-dd")
-            val contentWriteDate = simpleDataFormat.format(Date())
+
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val contentWriteDate = simpleDateFormat.format(Date())
             val contentState = ContentState.CONTENT_STATE_NORMAL.number
 
-            val contentModel = ContentModel(contentIdx, contentSubject, contentType, contentText, contentImage,contentWriterIdx, contentWriteDate, contentState)
-            // 업로드 한다.
+            val contentModel = ContentModel(contentIdx, contentSubject, contentType, contentText, contentImage, contentWriterIdx, contentWriteDate, contentState)
+            // 업로드한다.
             ContentDao.insertContentData(contentModel)
 
             // ReadContentFragment로 이동한다.
             Tools.hideSoftInput(contentActivity)
-            contentActivity.replaceFragment(ContentFragmentName.READ_CONTENT_FRAGMENT, true, true, null)
+
+            // 글 번호를 담는다.
+            val readBundle = Bundle()
+            readBundle.putInt("contentIdx", contentIdx)
+
+            contentActivity.replaceFragment(ContentFragmentName.READ_CONTENT_FRAGMENT, true, true, readBundle)
         }
     }
 

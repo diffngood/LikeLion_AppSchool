@@ -1,8 +1,10 @@
 package kr.co.lion.androidproject4boardapp.fragment
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,14 +17,22 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kr.co.lion.androidproject4boardapp.ContentActivity
 import kr.co.lion.androidproject4boardapp.ContentFragmentName
+import kr.co.lion.androidproject4boardapp.ContentState
 import kr.co.lion.androidproject4boardapp.ContentType
 import kr.co.lion.androidproject4boardapp.R
 import kr.co.lion.androidproject4boardapp.Tools
+import kr.co.lion.androidproject4boardapp.dao.ContentDao
 import kr.co.lion.androidproject4boardapp.databinding.FragmentModifyContentBinding
+import kr.co.lion.androidproject4boardapp.model.ContentModel
 import kr.co.lion.androidproject4boardapp.viewmodel.ModifyContentViewModel
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class ModifyContentFragment : Fragment() {
 
@@ -38,6 +48,20 @@ class ModifyContentFragment : Fragment() {
     // 촬영된 사진이 저장된 경로 정보를 가지고 있는 Uri 객체
     lateinit var contentUri: Uri
 
+    // 현재 글 번호를 담을 변수
+    var contentIdx = 0
+
+    // 초기화 메뉴를 누르면 입력요소에 설정할 값을 가지고 있는 데이터
+    var resetSubject = ""
+    var resetContentType = 0
+    var resetContentText = ""
+    var resetImage: Bitmap? = null
+
+    // 사용자에 의해서 이미지가 변경되었는지..
+    var isChangeImage = false
+    // 사용자가 이미지를 삭제했는지
+    var isRemoveImage = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
@@ -49,10 +73,14 @@ class ModifyContentFragment : Fragment() {
 
         contentActivity = activity as ContentActivity
 
+        // 글 번호를 담는다.
+        contentIdx = arguments?.getInt("contentIdx")!!
+
         settingToolbarModifyContent()
         settingInputForm()
         settingCameraLauncher()
         settingAlbumLauncher()
+        settingButtonModifyContentImageDelete()
 
         return fragmentModifyContentBinding.root
     }
@@ -84,7 +112,7 @@ class ModifyContentFragment : Fragment() {
                         }
                         //  초기화
                         R.id.menuItemModifyContentReset -> {
-                            settingInputForm()
+                            resetInputForm()
                         }
                         // 완료
                         R.id.menuItemModifyContentDone -> {
@@ -92,7 +120,8 @@ class ModifyContentFragment : Fragment() {
                             val chk = checkInputForm()
 
                             if(chk == true){
-                                contentActivity.removeFragment(ContentFragmentName.MODIFY_CONTENT_FRAGMENT)
+                                updateContentData()
+//                                contentActivity.removeFragment(ContentFragmentName.MODIFY_CONTENT_FRAGMENT)
                             }
                         }
                     }
@@ -104,10 +133,37 @@ class ModifyContentFragment : Fragment() {
 
     // 입력 요소 초기화
     fun settingInputForm(){
-        modifyContentViewModel.textFieldModifyContentSubject.value = "제목입니다"
-        modifyContentViewModel.textFieldModifyContentText.value = "내용입니다"
-        modifyContentViewModel.settingContentType(ContentType.TYPE_FREE)
+        // 입력 요소에 띄어쓰기를 넣어준다.
+        modifyContentViewModel.textFieldModifyContentSubject.value = " "
+        modifyContentViewModel.textFieldModifyContentText.value = " "
+
+        CoroutineScope(Dispatchers.Main).launch {
+
+            // 현재 글 번호에 해당하는 글 데이터를 가져온다.
+            val contentModel = ContentDao.selectContentData(contentIdx)
+
+            // 가져온 글 정보 중에 초기화를 위한 데이터를 프로퍼티에 담아준다.
+            // 초기화 메뉴를 누르면 입력요소에 설정할 값을 가지고 있는 데이터
+            resetSubject = contentModel?.contentSubject!!
+            resetContentType = contentModel?.contentType!!
+            resetContentText = contentModel?.contentText!!
+
+            // 가져온 데이터를 보여준다.
+            modifyContentViewModel.textFieldModifyContentSubject.value = contentModel?.contentSubject
+            modifyContentViewModel.settingContentType(contentModel?.contentType!!)
+            modifyContentViewModel.textFieldModifyContentText.value = contentModel?.contentText
+
+            // 이미지 데이터를 불러온다.
+            if(contentModel?.contentImage != null) {
+                ContentDao.gettingContentImage(contentActivity, contentModel.contentImage!!, fragmentModifyContentBinding.imageViewModifyContent)
+
+                // 이미지 뷰로 부터 이미지를 가져와 초기화를 위한 프로퍼티에 담아준다.
+                val bitmapDrawable = fragmentModifyContentBinding.imageViewModifyContent.drawable as BitmapDrawable
+                resetImage = bitmapDrawable.bitmap
+            }
+        }
     }
+
 
     // 카메라 런처 설정
     fun settingCameraLauncher(){
@@ -126,12 +182,30 @@ class ModifyContentFragment : Fragment() {
                 val bitmap3 = Tools.resizeBitmap(bitmap2, 1024)
 
                 fragmentModifyContentBinding.imageViewModifyContent.setImageBitmap(bitmap3)
+                isChangeImage = true
 
                 // 사진 파일을 삭제한다.
                 val file = File(contentUri.path)
                 file.delete()
             }
         }
+    }
+
+    // 입력 요소를 초기화 한다.
+    fun resetInputForm(){
+        // 가져온 데이터를 보여준다.
+        modifyContentViewModel.textFieldModifyContentSubject.value = resetSubject
+        modifyContentViewModel.settingContentType(resetContentType)
+        modifyContentViewModel.textFieldModifyContentText.value = resetContentText
+
+        // 이미지 데이터를 불러온다.
+        if(resetImage != null) {
+            fragmentModifyContentBinding.imageViewModifyContent.setImageBitmap(resetImage)
+        }
+
+        // 사용자가 이미지를 변경했는지의 값을 초기화한다.
+        isChangeImage = false
+        isRemoveImage = false
     }
 
     // 카메라 런처를 실행하는 메서드
@@ -192,6 +266,7 @@ class ModifyContentFragment : Fragment() {
                     val bitmap3 = Tools.resizeBitmap(bitmap2, 1024)
 
                     fragmentModifyContentBinding.imageViewModifyContent.setImageBitmap(bitmap3)
+                    isChangeImage = true
                 }
             }
         }
@@ -232,5 +307,52 @@ class ModifyContentFragment : Fragment() {
         return true
     }
 
+    // 이미지 삭제 버튼
+    fun settingButtonModifyContentImageDelete(){
+        fragmentModifyContentBinding.apply {
+            buttonModifyContentImageDelete.setOnClickListener {
+                // 이미지 뷰의 이미지를 변경한다.
+                imageViewModifyContent.setImageResource(R.drawable.panorama_24px)
+                isChangeImage = true
+                isRemoveImage = true
+            }
+        }
+    }
+
+    // 글 정보를 업로드하는 메서드
+    fun updateContentData() {
+        CoroutineScope(Dispatchers.Main).launch {
+            // 서버에서의 첨부 이미지 파일 이름
+            var serverFileName: String? = null
+
+            // 사용자가 이미지를 변경하였다면(삭제 X)
+            if (isChangeImage == true && isRemoveImage == false){
+                // 이미지 뷰의 이미지 데이터를 파일로 저장한다.
+                Tools.saveImageViewData(contentActivity, fragmentModifyContentBinding.imageViewModifyContent, "uploadTemp.jpg")
+                // 서버에서의 파일 이름
+                serverFileName = "image_${System.currentTimeMillis()}.jpg"
+                // 서버로 업로드한다.
+                ContentDao.uploadImage(contentActivity, "uploadTemp.jpg", serverFileName)
+            }
+
+            // 업로드할 정보를 담아준다.
+            val contentSubject = modifyContentViewModel.textFieldModifyContentSubject.value!!
+            val contentType = modifyContentViewModel.gettingContentType()
+            val contentText = modifyContentViewModel.textFieldModifyContentText.value!!
+
+            // 객체에 담아준다.
+            val contentModel = ContentModel(contentIdx, contentSubject,contentType, contentText,null,0,"",0)
+
+            // 업로드 된 이미지가 있다면
+            if (serverFileName != null){
+                contentModel.contentImage = serverFileName
+            }
+            // 업로드한다.
+            ContentDao.updateContentData(contentModel, isRemoveImage)
+
+            // 이전으로 돌아간다.
+            contentActivity.removeFragment(ContentFragmentName.MODIFY_CONTENT_FRAGMENT)
+        }
+    }
 
 }

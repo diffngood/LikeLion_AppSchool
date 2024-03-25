@@ -18,14 +18,24 @@ class ModifyContentViewModel : ViewModel() {
     val textFieldModifyContentText = MutableLiveData<String>()
 
     // 게시판 종류를 받아 MutableLiveData에 설정하는 메서드
-    fun settingContentType(contentType: ContentType){
+    fun settingContentType(contentType: Int){
         toggleModifyContentType.value = when(contentType){
-            ContentType.TYPE_ALL -> 0
-            ContentType.TYPE_FREE -> R.id.buttonModifyContentType1
-            ContentType.TYPE_HUMOR -> R.id.buttonModifyContentType2
-            ContentType.TYPE_SOCIETY -> R.id.buttonModifyContentType3
-            ContentType.TYPE_SPORTS -> R.id.buttonModifyContentType4
+            ContentType.TYPE_ALL.number -> 0
+            ContentType.TYPE_FREE.number -> R.id.buttonModifyContentType1
+            ContentType.TYPE_HUMOR.number -> R.id.buttonModifyContentType2
+            ContentType.TYPE_SOCIETY.number -> R.id.buttonModifyContentType3
+            ContentType.TYPE_SPORTS.number -> R.id.buttonModifyContentType4
+            else -> 0
         }
+    }
+
+    // 게시판의 타입을 반환하는 메서드를 만들어준다.
+    fun gettingContentType() = when(toggleModifyContentType.value){
+        R.id.buttonModifyContentType1 -> ContentType.TYPE_FREE.number
+        R.id.buttonModifyContentType2 -> ContentType.TYPE_HUMOR.number
+        R.id.buttonModifyContentType3 -> ContentType.TYPE_SOCIETY.number
+        R.id.buttonModifyContentType4 -> ContentType.TYPE_SPORTS.number
+        else -> 0
     }
 
     companion object {
