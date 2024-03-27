@@ -47,6 +47,14 @@ class ModifyUserViewModel : ViewModel(){
         }
     }
 
+    // 성별 값을 반환하는 메서드
+    // 선택되어 있는 버튼의 아이디로 분기한다.
+    fun gettingGender() = when (toggleModifyUserInfoGender.value){
+        R.id.buttonModifyUserInfoMale -> Gender.MALE.num
+        R.id.buttonModifyUserInfoFemale -> Gender.FEMALE.num
+        else -> 0
+    }
+
     companion object {
         // ViewModel에 값을 설정하여 화면에 반영하는 작업을 할 때 호출된다.
         // () 안에는 속성의 이름을 넣어준다. 속성의 이름은 자유롭게 해주면 되지만 기존의 속성 이름과 중복되지 않게

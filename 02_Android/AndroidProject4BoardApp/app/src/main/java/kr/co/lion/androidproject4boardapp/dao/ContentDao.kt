@@ -50,11 +50,12 @@ class ContentDao {
                 // 이미지의 주소를 가지고 있는 Uri 객체를 받아온다.
                 val imageUri = storageRef.downloadUrl.await()
                 // 이미지 데이터를 받아와 이미지 뷰에 보여준다.
-                CoroutineScope(Dispatchers.Main).launch {
+                val job2 = CoroutineScope(Dispatchers.Main).launch {
                     Glide.with(context).load(imageUri).into(imageView)
                     // 이미지 뷰가 나타나게 한다.
                     imageView.visibility = View.VISIBLE
                 }
+                job2.join()
             }
             job1.join()
 
@@ -176,11 +177,11 @@ class ContentDao {
                 val query = collectionReference.whereEqualTo("contentIdx", contentIdx).get().await()
 
                 // 저장할 데이터를 담을 HashMap을 만들어준다.
-                val map = mutableMapOf<String, Long>()
+                val map = mutableMapOf<String, Any>()
                 map["contentState"] = newState.number.toLong()
                 // 저장한다.
                 // 가져온 문서 중 첫 번째 문서에 접근하여 데이터를 수정한다.
-                query.documents[0].reference.set(map)
+                query.documents[0].reference.update(map)
             }
             job1.join()
         }

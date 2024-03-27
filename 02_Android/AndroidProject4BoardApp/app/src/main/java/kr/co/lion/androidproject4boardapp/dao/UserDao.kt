@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kr.co.lion.androidproject4boardapp.UserState
 import kr.co.lion.androidproject4boardapp.model.UserModel
 
 class UserDao {
@@ -153,6 +154,58 @@ class UserDao {
             job1.join()
 
             return userList
+        }
+
+        // 사용자 정보를 수정하는 메서드
+        suspend fun updateUserData(userModel: UserModel, isChangePassword: Boolean){
+            val job1 = CoroutineScope(Dispatchers.IO).launch {
+                // 컬렉션에 접근할 수 있는 객체를 가져온다.
+                val collectionReference = Firebase.firestore.collection("UserData")
+
+                // 컬렉션이 가지고 있는 문서들 중에 수정할 사용자 정보를 가져온다.
+                val query = collectionReference.whereEqualTo("userIdx", userModel.userIdx).get().await()
+
+                // 저장할 데이터를 담을 HashMap을 만들어준다.
+                val map = mutableMapOf<String, Any?>()
+                map["userNickName"] = userModel.userNickName
+                map["userAge"] = userModel.userAge
+                map["userGender"] = userModel.userGender
+                map["userHobby1"] = userModel.userHobby1
+                map["userHobby2"] = userModel.userHobby2
+                map["userHobby3"] = userModel.userHobby3
+                map["userHobby4"] = userModel.userHobby4
+                map["userHobby5"] = userModel.userHobby5
+                map["userHobby6"] = userModel.userHobby6
+
+                // 비밀번호를 변경한 적이 있다면..
+                if (isChangePassword){
+                    map["userPw"] = userModel.userPw
+
+                }
+                // 저장한다.
+                // 가져온 문서 중 첫 번째 문서에 접근하여 데이터를 수정한다.
+                query.documents[0].reference.update(map)
+            }
+            job1.join()
+        }
+
+
+        // 사용자 정보를 수정하는 메서드
+        suspend fun updateUserState(userIdx: Int, newState: UserState){
+            val job1 = CoroutineScope(Dispatchers.IO).launch {
+                // 컬렉션에 접근할 수 있는 객체를 가져온다.
+                val collectionReference = Firebase.firestore.collection("UserData")
+                // 컬렉션이 가지고 있는 문서들 중에 userIdx 필드가 지정된 사용자 번호값하고 같은 Document들을 가져온다.
+                val query = collectionReference.whereEqualTo("userIdx", userIdx).get().await()
+
+                // 저장할 데이터를 담을 HashMap을 만들어준다.
+                val map = mutableMapOf<String, Any>()
+                map["userState"] = newState.num.toLong()
+                // 저장한다.
+                // 가져온 문서 중 첫 번째 문서에 접근하여 데이터를 수정한다.
+                query.documents[0].reference.update(map)
+            }
+            job1.join()
         }
 
     } // companion object (end)

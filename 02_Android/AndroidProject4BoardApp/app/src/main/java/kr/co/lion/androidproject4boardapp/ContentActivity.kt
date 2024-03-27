@@ -1,11 +1,17 @@
 package kr.co.lion.androidproject4boardapp
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kr.co.lion.androidproject4boardapp.dao.UserDao
 import kr.co.lion.androidproject4boardapp.databinding.ActivityContentBinding
 import kr.co.lion.androidproject4boardapp.databinding.HeaderContentDrawerBinding
 import kr.co.lion.androidproject4boardapp.fragment.AddContentFragment
@@ -136,12 +142,13 @@ class ContentActivity : AppCompatActivity() {
                         }
                         // 로그아웃
                         R.id.menuItemContentNavigationLogout -> {
-
+                            logoutProcess()
+                            startMainActivity()
                         }
                         // 회원 탈퇴
                         R.id.menuItemContentNavigationSignOut -> {
-
-
+                            signoutProcess()
+                            startMainActivity()
                         }
                     }
                     true
@@ -260,4 +267,47 @@ class ContentActivity : AppCompatActivity() {
         // 지정한 이름으로 있는 Fragment를 BackStack에서 제거한다.
         supportFragmentManager.popBackStack(name.str, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
+
+    // 로그아웃 처리
+    fun logoutProcess(){
+        // 로그인 사용자와 관련된 프로퍼티를 초기화한다.
+        loginUserIdx = 0
+        loginUserNickName = ""
+
+        // Shared Preferences 에 자동 로그인 정보가 있다면 삭제한다.
+        var sharedPreferences = getSharedPreferences("AutoLogin", Context.MODE_PRIVATE)
+        // 자동 로그인 정보를 가져온다.
+        val tempUserIdx = sharedPreferences.getInt("loginUserIdx", -1)
+        // 자동 로그인 정보가 있다면...
+        if (tempUserIdx != -1){
+            // 정보를 삭제한다.
+            val editor = sharedPreferences.edit()
+            editor.remove("loginUserIdx")
+            editor.remove("loginUserNickName")
+            editor.apply()
+        }
+    }
+
+    // 회원 탈퇴
+    fun signoutProcess(){
+
+        // 로그아웃 처리
+        val signoutUserIdx = loginUserIdx
+        logoutProcess()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            // 사용자의 상태를 탈퇴 상태로 설정한다.
+            UserDao.updateUserState(signoutUserIdx, UserState.USER_STATE_SIGNOUT)
+        }
+    }
+
+    fun startMainActivity(){
+        // MainActivity를 실행하고 현재 Acrivity는 종료한다.
+        val mainIntent = Intent(this, MainActivity::class.java)
+        startActivity(mainIntent)
+
+        finish()
+    }
+
+
 }

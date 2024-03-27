@@ -1,6 +1,7 @@
 package kr.co.lion.androidproject4boardapp.fragment
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,9 +18,9 @@ import kr.co.lion.androidproject4boardapp.MainActivity
 import kr.co.lion.androidproject4boardapp.MainFragmentName
 import kr.co.lion.androidproject4boardapp.R
 import kr.co.lion.androidproject4boardapp.Tools
+import kr.co.lion.androidproject4boardapp.UserState
 import kr.co.lion.androidproject4boardapp.dao.UserDao
 import kr.co.lion.androidproject4boardapp.databinding.FragmentLoginBinding
-import kr.co.lion.androidproject4boardapp.model.UserModel
 import kr.co.lion.androidproject4boardapp.viewmodel.LoginViewModel
 
 class LoginFragment : Fragment() {
@@ -143,26 +144,44 @@ class LoginFragment : Fragment() {
                 }
                 // 비밀번호가 일치하다면
                 else {
-                    // 자동 로그인이 체크되어 있다면...
-                    if (loginViewModel.checkBoxLoginAuto.value == true){
-                        // Preferences 에 사용자 정보를 저장해둔다.
-                        val sharedPreferences = mainActivity.getSharedPreferences("AutoLogin", Context.MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
-                        editor.putInt("loginUserIdx", loginUserModel.userIdx)
-                        editor.putString("loginUserNickName", loginUserModel.userNickName)
-                        editor.apply()
+
+                    // 회원이 탈퇴 상태라면
+                    if (loginUserModel.userState == UserState.USER_STATE_SIGNOUT.num){
+                        MaterialAlertDialogBuilder(mainActivity).apply {
+                            setTitle("로그인 오류")
+                            setMessage("탈퇴한 회원입니다")
+                            setPositiveButton("확인"){ dialogInterface: DialogInterface, i: Int ->
+                                loginViewModel.textFieldLoginUserId.value = ""
+                                loginViewModel.textFieldLoginUserPw.value = ""
+                                Tools.showSoftInput(mainActivity, fragmentLoginBinding.textFieldLoginUserId)
+                            }
+                            show()
+                        }
+                        
+                    } else {
+
+                        // 자동 로그인이 체크되어 있다면...
+                        if (loginViewModel.checkBoxLoginAuto.value == true) {
+                            // Preferences 에 사용자 정보를 저장해둔다.
+                            val sharedPreferences =
+                                mainActivity.getSharedPreferences("AutoLogin", Context.MODE_PRIVATE)
+                            val editor = sharedPreferences.edit()
+                            editor.putInt("loginUserIdx", loginUserModel.userIdx)
+                            editor.putString("loginUserNickName", loginUserModel.userNickName)
+                            editor.apply()
+                        }
+
+                        // ContentActivity를 실행한다.
+                        val contentIntent = Intent(mainActivity, ContentActivity::class.java)
+
+                        // 로그인한 사용자의 정보를 전달해준다.
+                        contentIntent.putExtra("loginUserIdx", loginUserModel.userIdx)
+                        contentIntent.putExtra("loginUserNickName", loginUserModel.userNickName)
+
+                        startActivity(contentIntent)
+                        // MainActivity를 종료한다.
+                        mainActivity.finish()
                     }
-
-                    // ContentActivity를 실행한다.
-                    val contentIntent = Intent(mainActivity, ContentActivity::class.java)
-
-                    // 로그인한 사용자의 정보를 전달해준다.
-                    contentIntent.putExtra("loginUserIdx", loginUserModel.userIdx)
-                    contentIntent.putExtra("loginUserNickName", loginUserModel.userNickName)
-
-                    startActivity(contentIntent)
-                    // MainActivity를 종료한다.
-                    mainActivity.finish()
                 }
             }
         } // job1 (end)

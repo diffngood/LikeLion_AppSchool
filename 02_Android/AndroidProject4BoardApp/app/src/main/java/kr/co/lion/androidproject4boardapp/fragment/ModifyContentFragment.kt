@@ -351,8 +351,10 @@ class ModifyContentFragment : Fragment() {
             ContentDao.updateContentData(contentModel, isRemoveImage)
 
             // 이전으로 돌아간다.
+            Tools.hideSoftInput(contentActivity)
             contentActivity.removeFragment(ContentFragmentName.MODIFY_CONTENT_FRAGMENT)
         }
     }
+
 
 }
