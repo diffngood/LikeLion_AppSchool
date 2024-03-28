@@ -157,7 +157,7 @@ class LoginFragment : Fragment() {
                             }
                             show()
                         }
-                        
+
                     } else {
 
                         // 자동 로그인이 체크되어 있다면...

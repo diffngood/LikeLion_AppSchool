@@ -217,3 +217,9 @@ enum class ContentState(var str: String, var number: Int){
     CONTENT_STATE_NORMAL("정상", 1),
     CONTENT_STATE_REMOVE("삭제", 2),
 }
+
+// 댓글 상태 값
+enum class ReplyState(var str: String, var num: Int){
+    REPLY_STATE_NORMAL("정상", 1),
+    REPLY_STATE_DELETE("삭제", 2)
+}

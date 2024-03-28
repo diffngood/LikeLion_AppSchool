@@ -7,28 +7,49 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.divider.MaterialDividerItemDecoration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kr.co.lion.androidproject4boardapp.ContentActivity
 import kr.co.lion.androidproject4boardapp.R
+import kr.co.lion.androidproject4boardapp.ReplyState
+import kr.co.lion.androidproject4boardapp.Tools
+import kr.co.lion.androidproject4boardapp.dao.ReplyDao
 import kr.co.lion.androidproject4boardapp.databinding.FragmentReadContentBottomBinding
 import kr.co.lion.androidproject4boardapp.databinding.RowReadContentReplayBinding
+import kr.co.lion.androidproject4boardapp.model.ReplyModel
+import kr.co.lion.androidproject4boardapp.viewmodel.ReadContentBottomViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
-class ReadContentBottomFragment : BottomSheetDialogFragment() {
+class ReadContentBottomFragment(var isContentWriter: Boolean, var contentIdx: Int) : BottomSheetDialogFragment() {
 
     lateinit var fragmentReadContentBottomBinding: FragmentReadContentBottomBinding
     lateinit var contentActivity: ContentActivity
+
+    lateinit var readContentBottomViewModel: ReadContentBottomViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        fragmentReadContentBottomBinding = FragmentReadContentBottomBinding.inflate(inflater)
+        // fragmentReadContentBottomBinding = FragmentReadContentBottomBinding.inflate(inflater)
+        fragmentReadContentBottomBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_read_content_bottom, container, false)
+        readContentBottomViewModel = ReadContentBottomViewModel()
+        fragmentReadContentBottomBinding.readContentBottomViewModel = readContentBottomViewModel
+        fragmentReadContentBottomBinding.lifecycleOwner = this
+
         contentActivity = activity as ContentActivity
 
         settingRecyclerViewAddContentReply()
+        settingTextField()
+
+        // readContentBottomViewModel.textFieldAddContentReply.value = "테스트 댓글 입니다."
 
         return fragmentReadContentBottomBinding.root
     }
@@ -123,4 +144,53 @@ class ReadContentBottomFragment : BottomSheetDialogFragment() {
         // 세로 길이를 반환
         return displayMetrics.heightPixels
     }
+
+    // 입력 요소 설정
+    fun settingTextField(){
+        fragmentReadContentBottomBinding.apply { 
+            // 현재 글의 작성자가 로그인한 사람이라면..
+            if (isContentWriter){
+                // 자신의 글에는 댓글을 입력할 수 없다는 문구를 넣어준다.
+                textFieldAddContentReply.setText("댓글을 달 수 없습니다")
+                textFieldAddContentReply.isEnabled = false
+            } else {
+                textFieldAddContentReply.apply {
+                    // 엔터키 이벤트를 설정한다.
+                    setOnEditorActionListener { v, actionId, event ->
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            // 댓글 번호를 가져온다.
+                            val replySequence = ReplyDao.getReplySequence()
+                            // 댓글 번호를 업데이트 한다.
+                            ReplyDao.updateReplySequence(replySequence + 1)
+                            // 저장할 데이터를 담는다.
+                            val replyIdx = replySequence + 1
+                            val replyWriteIdx = contentActivity.loginUserIdx
+                            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+                            val replyWriteDate = simpleDateFormat.format(Date())
+                            val replyContentIdx = contentIdx
+                            val replyText = readContentBottomViewModel?.textFieldAddContentReply?.value!!
+                            val replyState = ReplyState.REPLY_STATE_NORMAL.num
+
+                            val replyModel = ReplyModel(replyIdx, replyWriteIdx,replyWriteDate, replyContentIdx,
+                                replyText, replyState)
+
+                            // 저장한다.
+                            ReplyDao.insertReplyData(replyModel)
+
+                            // 입력 요소를 비워준다.
+                            readContentBottomViewModel?.textFieldAddContentReply?.value = ""
+
+                        }
+
+                        // false를 반환하여 키보드가 내려가게 한다.
+                        false
+                    }
+                }
+            }
+        }
+    }
+
+
+
 }
