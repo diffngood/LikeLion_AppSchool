@@ -17,6 +17,7 @@ import kotlinx.coroutines.tasks.await
 import kr.co.lion.androidproject4boardapp.ContentState
 import kr.co.lion.androidproject4boardapp.ContentType
 import kr.co.lion.androidproject4boardapp.model.ContentModel
+import kr.co.lion.androidproject4boardapp.model.ReplyModel
 import kr.co.lion.androidproject4boardapp.model.UserModel
 import java.io.File
 
@@ -209,7 +210,6 @@ class ContentDao {
             }
             job1.join()
         }
-
 
 
     }
