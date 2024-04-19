@@ -142,7 +142,7 @@ class AddContentFragment : Fragment() {
                 // 회전된 이미지를 구한다.
                 val bitmap2 = Tools.rotateBitmap(bitmap, degree.toFloat())
                 // 크기를 조정한 이미지를 구한다.
-                val bitmap3 = Tools.resizeBitmap(bitmap2, 1024)
+                val bitmap3 = Tools.resizeBitmap(bitmap2, 256)
 
                 fragmentAddContentBinding.imageViewAddContent.setImageBitmap(bitmap3)
                 isAddPicture = true
@@ -209,7 +209,7 @@ class AddContentFragment : Fragment() {
                     // 회전 이미지를 가져온다
                     val bitmap2 = Tools.rotateBitmap(bitmap!!, degree.toFloat())
                     // 크기를 줄인 이미지를 가져온다.
-                    val bitmap3 = Tools.resizeBitmap(bitmap2, 1024)
+                    val bitmap3 = Tools.resizeBitmap(bitmap2, 256)
 
                     fragmentAddContentBinding.imageViewAddContent.setImageBitmap(bitmap3)
                     isAddPicture = true
