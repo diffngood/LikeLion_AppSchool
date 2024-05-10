@@ -29,12 +29,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kr.co.lion.jetpackexample.db.MemoDatabase
+import kr.co.lion.jetpackexample.db.MemoEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputScreen(navHostController: NavHostController) {
+
+    // context
+    val context = LocalContext.current
+
+    // 제목 입력 요소와 연결되어 있는 데이터 관리 요소
+    val subjectTextState = remember {
+        mutableStateOf("")
+    }
+
+    // 내용 입력 요소와 연결되어 있는 데이터 관리 요소
+    val contentTextState = remember {
+        mutableStateOf("")
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,7 +89,17 @@ fun InputScreen(navHostController: NavHostController) {
                 // 우측 상단 메뉴
                 actions = {
                     IconButton(onClick = {
-                        navHostController.popBackStack()
+                        // 데이터 베이스 객체를 가져온다.
+                        var memoDatabase = MemoDatabase.getInstance(context)
+                        // 데이터를 담는다.
+                        val memoEntity = MemoEntity(memoSubject = subjectTextState.value, memoText = contentTextState.value)
+                        // 저장
+                        CoroutineScope(Dispatchers.Main).launch {
+                            async (Dispatchers.IO){
+                                memoDatabase?.memoDao()?.insertMemoData(memoEntity)
+                            }
+                            navHostController.popBackStack()
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Done,
@@ -92,10 +123,7 @@ fun InputScreen(navHostController: NavHostController) {
                 .padding(it)
                 .background(Color.White)
         ) {
-            // 제목 입력 요소와 연결되어 있는 데이터 관리 요소
-            val subjectTextState = remember {
-                mutableStateOf("")
-            }
+
             // 제목 입력 요소
             TextField(
                 // TextField가 관리하는 값
@@ -143,11 +171,6 @@ fun InputScreen(navHostController: NavHostController) {
             )
             // 여백
             Spacer(modifier = Modifier.padding(top = 10.dp))
-
-            // 내용 입력 요소와 연결되어 있는 데이터 관리 요소
-            val contentTextState = remember {
-                mutableStateOf("")
-            }
 
             // 제목 입력 요소
             TextField(

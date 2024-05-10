@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import kr.co.lion.jetpackexample.ui.theme.JetPackExampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -138,7 +140,9 @@ fun MemoApp(modifier: Modifier = Modifier) {
 
         // 결과화면
         composable(
-            route = ScreenName.OutputScreen.name,
+            // 결과를 보여주는 화면은 메모 번호가 필요하기 때문에 메모 번호를 받도록 구성해준다.
+            // 화면의 이름/값 : 값 부분으로 전달되는 값이 memoIdx라는 이름으로 추출할 수 있다.
+            route = "${ScreenName.OutputScreen.name}/{memoIdx}",
             enterTransition = {
                 slideInHorizontally(
                     // 화면 초기 위치
@@ -164,15 +168,25 @@ fun MemoApp(modifier: Modifier = Modifier) {
                 )
             },
             // 다음 화면에서 돌아올 때 B 화면에 적용되는 애니메이션
-            popExitTransition = {
+            popExitTransition = {//
                 slideOutHorizontally(
                     targetOffsetX = {it},
                     animationSpec = tween(durationMillis = 200, delayMillis = 200)
                 )
-            }
+            },
+            // 보여줄 화면으로 값을 전달한다.
+            // arguments 담은 객체는 다음에 보여줄 화면 Composable로 전달된다.
+            arguments = listOf(
+                // memoIdx 라는 이름으로 전달되는 값을 담아 준다.
+                navArgument("memoIdx"){
+                    // 전달할 값의 타입
+                    type = NavType.IntType
+                },
+            )
         ) {
             // OutputScreen이 구성되도록 호출한다.
-            ResultScreen(navHostController = navController)
+            // navHostController와 데이터를 추출할 수 있는 객체를 전달한다.
+            ResultScreen(navHostController = navController, it)
         }
     }
 }
